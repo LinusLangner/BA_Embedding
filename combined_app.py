@@ -5,6 +5,14 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 from transformers import AutoTokenizer
 import random
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get the "hf_token" from the environment variables
+access_token = os.getenv("hf_token")
 
 # Set page config
 st.set_page_config(page_title="Word Embeddings & Sentence Tokenizer", layout="wide")
@@ -189,7 +197,7 @@ def get_random_color(previous_color=None):
 # Initialize tokenizer
 @st.cache_resource
 def load_tokenizer():
-    return AutoTokenizer.from_pretrained("meta-llama/Meta-Llama-3.1-8B-Instruct")
+    return AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=access_token)
 
 tokenizer = load_tokenizer()
 
@@ -239,4 +247,4 @@ if user_input:
 
     # Show token IDs
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
-    st.write("Token IDs:", token_ids)
+    st.write("Token IDs Hallo Jonas:", token_ids)
