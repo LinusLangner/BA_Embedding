@@ -112,7 +112,7 @@ else:
     fig_2d = go.Figure()
 
     # Add points for each word group
-    colors = ['green', 'orange', 'blue', 'red', '#FF1493']  # Changed user input color to bright pink
+    colors = ['green', 'orange', 'blue', 'red', '#FF1493']  # Bright pink for user inputs
     group_names = ["Tier", "Obst", "Farbe", "Emotion", "Benutzer Eingaben"]
     
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
@@ -126,7 +126,6 @@ else:
                 marker=dict(
                     size=12,
                     color=colors[i],
-                    line=dict(width=2, color='DarkSlateGrey') if i == 4 else dict(width=0),  # Add border to user inputs
                 ),
                 textposition="top center",
                 name=f'{group_names[i]}-bezogene Wörter'
@@ -157,7 +156,6 @@ else:
                 marker=dict(
                     size=8,
                     color=colors[i],
-                    line=dict(width=2, color='DarkSlateGrey') if i == 4 else dict(width=0),  # Add border to user inputs
                 ),
                 textposition="top center",
                 name=f'{group_names[i]}-bezogene Wörter'
