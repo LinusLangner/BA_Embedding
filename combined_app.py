@@ -81,16 +81,18 @@ emotions_worte = ["Glücklich", "Traurig", "Wütend", "Aufgeregt", "Nervös", "A
 # Alle Wörter kombinieren
 alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte
 
-# Embeddings für alle Wörter abrufen
-embeddings = np.array([model[word.lower()] for word in alle_worte])
+# Embeddings für alle Wörter abrufen, nur wenn das Wort im Modell vorhanden ist
+embeddings = np.array([model[word.lower()] for word in alle_worte if word.lower() in model])
 
-# 2D PCA
-pca_2d = PCA(n_components=2)
-reduzierte_embeddings_2d = pca_2d.fit_transform(embeddings)
+if len(embeddings) == 0:
+    st.error("Keines der Wörter wurde im GloVe-Modell gefunden.")
+else:
+    # 2D und 3D PCA wie vorher
+    pca_2d = PCA(n_components=2)
+    reduzierte_embeddings_2d = pca_2d.fit_transform(embeddings)
 
-# 3D PCA
-pca_3d = PCA(n_components=3)
-reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
+    pca_3d = PCA(n_components=3)
+    reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
 # 2D Streudiagramm erstellen
 fig_2d = go.Figure()
