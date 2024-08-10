@@ -241,4 +241,4 @@ if user_input:
 
     # Show token IDs
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
-    st.write("Token IDs Hallo Jonas:", token_ids)
+    st.write("Token IDs:", token_ids)
