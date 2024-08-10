@@ -8,10 +8,10 @@ import random
 
 hf_token = st.secrets["hf_token"]
 
-# Seiteneinstellungen
+# Page settings
 st.set_page_config(page_title="Wort-Embeddings & Satz-Tokenizer", layout="wide")
 
-# Allgemeine Stilvorgaben für Konsistenz
+# General style guidelines for consistency
 st.markdown("""
 <style>
     .stApp {
@@ -61,15 +61,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Abschnitt 1: Wort-Embeddings Visualisierungen
+# Section 1: Word Embeddings Visualizations
 st.title("🔍 Wort-Embeddings Visualisierungen")
 
-# GloVe-Modell nur einmal laden und cachen
+# Load GloVe model only once and cache
 @st.cache_resource
 def load_model():
     return api.load('glove-wiki-gigaword-50')
 
-# Modell laden
+# Load model
 model = load_model()
 
 # Word groups
@@ -78,96 +78,117 @@ obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "
 farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "orange", "black", "white", "brown"]
 emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
 
-# Alle Wörter kombinieren
-alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte
+# User input for custom words
+st.subheader("Fügen Sie Ihre eigenen Wörter hinzu")
+user_words = st.text_input("Geben Sie Wörter ein, getrennt durch Kommas:", "")
+user_words = [word.strip().lower() for word in user_words.split(',') if word.strip()]
 
-# Embeddings für alle Wörter abrufen, nur wenn das Wort im Modell vorhanden ist
-embeddings = np.array([model[word.lower()] for word in alle_worte if word.lower() in model])
+# Combine all words
+alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte + user_words
+
+# Get embeddings for all words, only if the word is in the model
+embeddings = []
+valid_words = []
+for word in alle_worte:
+    if word.lower() in model:
+        embeddings.append(model[word.lower()])
+        valid_words.append(word)
+    else:
+        st.warning(f"Das Wort '{word}' wurde im GloVe-Modell nicht gefunden und wird ignoriert.")
+
+embeddings = np.array(embeddings)
 
 if len(embeddings) == 0:
     st.error("Keines der Wörter wurde im GloVe-Modell gefunden.")
 else:
-    # 2D und 3D PCA wie vorher
+    # 2D and 3D PCA
     pca_2d = PCA(n_components=2)
     reduzierte_embeddings_2d = pca_2d.fit_transform(embeddings)
 
     pca_3d = PCA(n_components=3)
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-# 2D Streudiagramm erstellen
-fig_2d = go.Figure()
+    # Create 2D scatter plot
+    fig_2d = go.Figure()
 
-# Punkte für jede Wortgruppe hinzufügen
-for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte]):
-    fig_2d.add_trace(go.Scatter(
-        x=reduzierte_embeddings_2d[i*10:(i+1)*10, 0],
-        y=reduzierte_embeddings_2d[i*10:(i+1)*10, 1],
-        mode='markers+text',
-        text=words,
-        marker=dict(
-            size=12,
-            color=['green', 'orange', 'blue', 'red'][i]
-        ),
-        textposition="top center",
-        name=f'{["Tier", "Obst", "Farbe", "Emotion"][i]}-bezogene Wörter'
-    ))
+    # Add points for each word group
+    colors = ['green', 'orange', 'blue', 'red', 'purple']  # Add a new color for user inputs
+    group_names = ["Tier", "Obst", "Farbe", "Emotion", "Benutzer Eingaben"]
+    
+    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
+        valid_indices = [j for j, word in enumerate(valid_words) if word in words]
+        if valid_indices:
+            fig_2d.add_trace(go.Scatter(
+                x=reduzierte_embeddings_2d[valid_indices, 0],
+                y=reduzierte_embeddings_2d[valid_indices, 1],
+                mode='markers+text',
+                text=[valid_words[j] for j in valid_indices],
+                marker=dict(
+                    size=12,
+                    color=colors[i]
+                ),
+                textposition="top center",
+                name=f'{group_names[i]}-bezogene Wörter'
+            ))
 
-# 2D Layout aktualisieren
-fig_2d.update_layout(
-    xaxis_title='PCA 1',
-    yaxis_title='PCA 2',
-    height=600,
-    margin=dict(l=20, r=20, t=30, b=20),
-    legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
-)
-
-# 3D Streudiagramm erstellen
-fig_3d = go.Figure()
-
-# Punkte für jede Wortgruppe hinzufügen
-for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte]):
-    fig_3d.add_trace(go.Scatter3d(
-        x=reduzierte_embeddings_3d[i*10:(i+1)*10, 0],
-        y=reduzierte_embeddings_3d[i*10:(i+1)*10, 1],
-        z=reduzierte_embeddings_3d[i*10:(i+1)*10, 2],
-        mode='markers+text',
-        text=words,
-        marker=dict(
-            size=8,
-            color=['green', 'orange', 'blue', 'red'][i]
-        ),
-        textposition="top center",
-        name=f'{["Tier", "Obst", "Farbe", "Emotion"][i]}-bezogene Wörter'
-    ))
-
-# 3D Layout aktualisieren
-fig_3d.update_layout(
-    scene=dict(
+    # Update 2D layout
+    fig_2d.update_layout(
         xaxis_title='PCA 1',
         yaxis_title='PCA 2',
-        zaxis_title='PCA 3',
-    ),
-    height=600,
-    margin=dict(l=20, r=20, t=30, b=20),
-    legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
-)
+        height=600,
+        margin=dict(l=20, r=20, t=30, b=20),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
+    )
 
-# Layout und Anzeige
-st.subheader("2D und 3D Wort-Embeddings Visualisierungen")
+    # Create 3D scatter plot
+    fig_3d = go.Figure()
 
-# Zwei Spalten erstellen
-col1, col2 = st.columns(2)
+    # Add points for each word group
+    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
+        valid_indices = [j for j, word in enumerate(valid_words) if word in words]
+        if valid_indices:
+            fig_3d.add_trace(go.Scatter3d(
+                x=reduzierte_embeddings_3d[valid_indices, 0],
+                y=reduzierte_embeddings_3d[valid_indices, 1],
+                z=reduzierte_embeddings_3d[valid_indices, 2],
+                mode='markers+text',
+                text=[valid_words[j] for j in valid_indices],
+                marker=dict(
+                    size=8,
+                    color=colors[i]
+                ),
+                textposition="top center",
+                name=f'{group_names[i]}-bezogene Wörter'
+            ))
 
-# Diagramme nebeneinander anzeigen
-with col1:
-    st.write("#### 2D Visualisierung")
-    st.plotly_chart(fig_2d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
+    # Update 3D layout
+    fig_3d.update_layout(
+        scene=dict(
+            xaxis_title='PCA 1',
+            yaxis_title='PCA 2',
+            zaxis_title='PCA 3',
+        ),
+        height=600,
+        margin=dict(l=20, r=20, t=30, b=20),
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
+    )
 
-with col2:
-    st.write("#### 3D Visualisierung")
-    st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
+    # Layout and display
+    st.subheader("2D und 3D Wort-Embeddings Visualisierungen")
 
-# Größeren Abstand für klare Trennung hinzufügen
+    # Create two columns
+    col1, col2 = st.columns(2)
+
+    # Display charts side by side
+    with col1:
+        st.write("#### 2D Visualisierung")
+        st.plotly_chart(fig_2d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
+
+    with col2:
+        st.write("#### 3D Visualisierung")
+        st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
+
+# Add larger space for clear separation
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
 # Abschnitt 2: Satz-Tokenizer
