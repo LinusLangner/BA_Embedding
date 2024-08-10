@@ -74,7 +74,7 @@ model = load_model()
 
 # Word groups
 tier_worte = ["dog", "cat", "lion", "elephant", "bird", "fish", "horse", "tiger", "whale", "bear"]
-obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "kiwi", "mango"]
+obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "peanut", "mango"]
 farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "orange", "black", "white", "brown"]
 emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
 
