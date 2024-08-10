@@ -109,11 +109,11 @@ else:
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
     
-    # Create 2D scatter plot
+        # Create 2D scatter plot
     fig_2d = go.Figure()
 
     # Add points for each word group
-    colors = ['green', 'orange', 'blue', 'red', '#FF1493']  # Bright pink for user inputs
+    colors = ['green', 'orange', 'blue', 'red', '#00FFFF']  # Cyan for user inputs
     group_names = ["Tier", "Obst", "Farbe", "Emotion", "Benutzer Eingaben"]
 
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
@@ -140,8 +140,8 @@ else:
         margin=dict(l=20, r=20, t=30, b=20),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
-    
-        # Create 3D scatter plot
+
+           # Create 3D scatter plot
     fig_3d = go.Figure()
     
     # Add points for each word group
