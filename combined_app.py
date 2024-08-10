@@ -78,8 +78,14 @@ fruit_words = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", 
 color_words = ["red", "blue", "green", "yellow", "purple", "pink", "orange", "black", "white", "brown"]
 emotion_words = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
 
+# Create an input field for the user to add custom words
+user_words_input = st.text_input("Add a word (or multiple words separated by commas) to visualize:", "")
+
+# Parse user input into a list of words
+user_words = [word.strip() for word in user_words_input.split(',') if word.strip()]
+
 # Combine all words
-all_words = animal_words + fruit_words + color_words + emotion_words
+all_words = animal_words + fruit_words + color_words + emotion_words + user_words
 
 # Get embeddings for all the words
 embeddings = np.array([model[word] for word in all_words])
@@ -110,6 +116,21 @@ for i, words in enumerate([animal_words, fruit_words, color_words, emotion_words
         name=f'{["Animal", "Fruit", "Color", "Emotion"][i]}-related words'
     ))
 
+# Add the user-defined words to the 2D scatter plot
+if user_words:
+    fig_2d.add_trace(go.Scatter(
+        x=reduced_embeddings_2d[-len(user_words):, 0],
+        y=reduced_embeddings_2d[-len(user_words):, 1],
+        mode='markers+text',
+        text=user_words,
+        marker=dict(
+            size=12,
+            color='purple'  # Custom color for user words
+        ),
+        textposition="top center",
+        name='User-defined words'
+    ))
+
 # Update 2D layout
 fig_2d.update_layout(
     xaxis_title='PCA 1',
@@ -136,6 +157,22 @@ for i, words in enumerate([animal_words, fruit_words, color_words, emotion_words
         ),
         textposition="top center",
         name=f'{["Animal", "Fruit", "Color", "Emotion"][i]}-related words'
+    ))
+
+# Add the user-defined words to the 3D scatter plot
+if user_words:
+    fig_3d.add_trace(go.Scatter3d(
+        x=reduced_embeddings_3d[-len(user_words):, 0],
+        y=reduced_embeddings_3d[-len(user_words):, 1],
+        z=reduced_embeddings_3d[-len(user_words):, 2],
+        mode='markers+text',
+        text=user_words,
+        marker=dict(
+            size=8,
+            color='purple'  # Custom color for user words
+        ),
+        textposition="top center",
+        name='User-defined words'
     ))
 
 # Update 3D layout
