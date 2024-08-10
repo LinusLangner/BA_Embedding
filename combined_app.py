@@ -72,11 +72,11 @@ def load_model():
 # Modell laden
 model = load_model()
 
-# Wortgruppen
-tier_worte = ["Hund", "Katze", "Löwe", "Elefant", "Vogel", "Fisch", "Pferd", "Tiger", "Wal", "Bär"]
-obst_worte = ["Apfel", "Banane", "Kirsche", "Traube", "Orange", "Birne", "Pfirsich", "Pflaume", "Kiwi", "Mango"]
-farben_worte = ["Rot", "Blau", "Grün", "Gelb", "Lila", "Rosa", "Orange", "Schwarz", "Weiß", "Braun"]
-emotions_worte = ["Glücklich", "Traurig", "Wütend", "Aufgeregt", "Nervös", "Angst", "Freude", "Liebe", "Hass", "Überraschung"]
+# Word groups
+tier_worte = ["dog", "cat", "lion", "elephant", "bird", "fish", "horse", "tiger", "whale", "bear"]
+obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "kiwi", "mango"]
+farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "orange", "black", "white", "brown"]
+emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
 
 # Alle Wörter kombinieren
 alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte
