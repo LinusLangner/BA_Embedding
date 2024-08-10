@@ -6,6 +6,8 @@ import plotly.graph_objs as go
 from transformers import AutoTokenizer
 import random
 
+hf_token = st.secrets["hf_token"]
+
 # Set page config
 st.set_page_config(page_title="Word Embeddings & Sentence Tokenizer", layout="wide")
 
