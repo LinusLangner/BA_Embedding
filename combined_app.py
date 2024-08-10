@@ -8,10 +8,10 @@ import random
 
 hf_token = st.secrets["hf_token"]
 
-# Set page config
-st.set_page_config(page_title="Word Embeddings & Sentence Tokenizer", layout="wide")
+# Seiteneinstellungen
+st.set_page_config(page_title="Wort-Embeddings & Satz-Tokenizer", layout="wide")
 
-# General styling for consistency
+# Allgemeine Stilvorgaben für Konsistenz
 st.markdown("""
 <style>
     .stApp {
@@ -61,45 +61,45 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Section 1: Word Embeddings Visualizations
-st.title("🔍 Word Embeddings Visualizations")
+# Abschnitt 1: Wort-Embeddings Visualisierungen
+st.title("🔍 Wort-Embeddings Visualisierungen")
 
-# Load the GloVe model only once using caching
+# GloVe-Modell nur einmal laden und cachen
 @st.cache_resource
 def load_model():
     return api.load('glove-wiki-gigaword-50')
 
-# Load the model
+# Modell laden
 model = load_model()
 
-# Word groups
-animal_words = ["dog", "cat", "lion", "elephant", "bird", "fish", "horse", "tiger", "whale", "bear"]
-fruit_words = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "kiwi", "mango"]
-color_words = ["red", "blue", "green", "yellow", "purple", "pink", "orange", "black", "white", "brown"]
-emotion_words = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
+# Wortgruppen
+tier_worte = ["Hund", "Katze", "Löwe", "Elefant", "Vogel", "Fisch", "Pferd", "Tiger", "Wal", "Bär"]
+obst_worte = ["Apfel", "Banane", "Kirsche", "Traube", "Orange", "Birne", "Pfirsich", "Pflaume", "Kiwi", "Mango"]
+farben_worte = ["Rot", "Blau", "Grün", "Gelb", "Lila", "Rosa", "Orange", "Schwarz", "Weiß", "Braun"]
+emotions_worte = ["Glücklich", "Traurig", "Wütend", "Aufgeregt", "Nervös", "Angst", "Freude", "Liebe", "Hass", "Überraschung"]
 
-# Combine all words
-all_words = animal_words + fruit_words + color_words + emotion_words
+# Alle Wörter kombinieren
+alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte
 
-# Get embeddings for all the words
-embeddings = np.array([model[word] for word in all_words])
+# Embeddings für alle Wörter abrufen
+embeddings = np.array([model[word.lower()] for word in alle_worte])
 
 # 2D PCA
 pca_2d = PCA(n_components=2)
-reduced_embeddings_2d = pca_2d.fit_transform(embeddings)
+reduzierte_embeddings_2d = pca_2d.fit_transform(embeddings)
 
 # 3D PCA
 pca_3d = PCA(n_components=3)
-reduced_embeddings_3d = pca_3d.fit_transform(embeddings)
+reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-# Create the 2D scatter plot
+# 2D Streudiagramm erstellen
 fig_2d = go.Figure()
 
-# Add points for each word group
-for i, words in enumerate([animal_words, fruit_words, color_words, emotion_words]):
+# Punkte für jede Wortgruppe hinzufügen
+for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte]):
     fig_2d.add_trace(go.Scatter(
-        x=reduced_embeddings_2d[i*10:(i+1)*10, 0],
-        y=reduced_embeddings_2d[i*10:(i+1)*10, 1],
+        x=reduzierte_embeddings_2d[i*10:(i+1)*10, 0],
+        y=reduzierte_embeddings_2d[i*10:(i+1)*10, 1],
         mode='markers+text',
         text=words,
         marker=dict(
@@ -107,10 +107,10 @@ for i, words in enumerate([animal_words, fruit_words, color_words, emotion_words
             color=['green', 'orange', 'blue', 'red'][i]
         ),
         textposition="top center",
-        name=f'{["Animal", "Fruit", "Color", "Emotion"][i]}-related words'
+        name=f'{["Tier", "Obst", "Farbe", "Emotion"][i]}-bezogene Wörter'
     ))
 
-# Update 2D layout
+# 2D Layout aktualisieren
 fig_2d.update_layout(
     xaxis_title='PCA 1',
     yaxis_title='PCA 2',
@@ -119,15 +119,15 @@ fig_2d.update_layout(
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
 )
 
-# Create the 3D scatter plot
+# 3D Streudiagramm erstellen
 fig_3d = go.Figure()
 
-# Add points for each word group
-for i, words in enumerate([animal_words, fruit_words, color_words, emotion_words]):
+# Punkte für jede Wortgruppe hinzufügen
+for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte]):
     fig_3d.add_trace(go.Scatter3d(
-        x=reduced_embeddings_3d[i*10:(i+1)*10, 0],
-        y=reduced_embeddings_3d[i*10:(i+1)*10, 1],
-        z=reduced_embeddings_3d[i*10:(i+1)*10, 2],
+        x=reduzierte_embeddings_3d[i*10:(i+1)*10, 0],
+        y=reduzierte_embeddings_3d[i*10:(i+1)*10, 1],
+        z=reduzierte_embeddings_3d[i*10:(i+1)*10, 2],
         mode='markers+text',
         text=words,
         marker=dict(
@@ -135,10 +135,10 @@ for i, words in enumerate([animal_words, fruit_words, color_words, emotion_words
             color=['green', 'orange', 'blue', 'red'][i]
         ),
         textposition="top center",
-        name=f'{["Animal", "Fruit", "Color", "Emotion"][i]}-related words'
+        name=f'{["Tier", "Obst", "Farbe", "Emotion"][i]}-bezogene Wörter'
     ))
 
-# Update 3D layout
+# 3D Layout aktualisieren
 fig_3d.update_layout(
     scene=dict(
         xaxis_title='PCA 1',
@@ -150,81 +150,81 @@ fig_3d.update_layout(
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
 )
 
-# Layout and display
-st.subheader("2D and 3D Word Embeddings Visualizations")
+# Layout und Anzeige
+st.subheader("2D und 3D Wort-Embeddings Visualisierungen")
 
-# Create two columns
+# Zwei Spalten erstellen
 col1, col2 = st.columns(2)
 
-# Display charts side by side
+# Diagramme nebeneinander anzeigen
 with col1:
-    st.write("#### 2D Visualization")
+    st.write("#### 2D Visualisierung")
     st.plotly_chart(fig_2d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
 
 with col2:
-    st.write("#### 3D Visualization")
+    st.write("#### 3D Visualisierung")
     st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
 
-# Add a larger padding for clearance
+# Größeren Abstand für klare Trennung hinzufügen
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
-# Section 2: Sentence Tokenizer
-st.title("📝 Sentence Tokenizer")
+# Abschnitt 2: Satz-Tokenizer
+st.title("📝 Satz-Tokenizer")
 
-# Define a set of subtle, semi-transparent colors
-COLORS = [
-    "rgba(255, 99, 71, 0.3)",   # Tomato
+# Definieren einer Reihe von subtilen, halbtransparenten Farben
+FARBEN = [
+    "rgba(255, 99, 71, 0.3)",   # Tomate
     "rgba(255, 165, 0, 0.3)",   # Orange
     "rgba(255, 215, 0, 0.3)",   # Gold
-    "rgba(154, 205, 50, 0.3)",  # Yellow Green
-    "rgba(0, 255, 127, 0.3)",   # Spring Green
-    "rgba(100, 149, 237, 0.3)", # Cornflower Blue
-    "rgba(138, 43, 226, 0.3)",  # Blue Violet
-    "rgba(255, 192, 203, 0.3)", # Pink
+    "rgba(154, 205, 50, 0.3)",  # Gelbgrün
+    "rgba(0, 255, 127, 0.3)",   # Frühlinggrün
+    "rgba(100, 149, 237, 0.3)", # Kornblumenblau
+    "rgba(138, 43, 226, 0.3)",  # Blauviolett
+    "rgba(255, 192, 203, 0.3)", # Rosa
 ]
 
-# Function to get a random color, avoiding consecutive repeats
+# Funktion, um eine zufällige Farbe auszuwählen, die keine aufeinanderfolgenden Wiederholungen enthält
 def get_random_color(previous_color=None):
-    available_colors = [c for c in COLORS if c != previous_color]
+    available_colors = [c for c in FARBEN if c != previous_color]
     return random.choice(available_colors)
 
-# Initialize tokenizer
+# Tokenizer initialisieren
 @st.cache_resource
 def load_tokenizer():
     return AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=hf_token)
 
 tokenizer = load_tokenizer()
 
-# Create three columns
+# Drei Spalten erstellen
 col1, col2, col3 = st.columns([2, 1, 1])
 
-# Placeholder text
-placeholder_text = "Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen. Blumen wuchsen bald überall."
+# Platzhaltertext
+platzhalter_text = "Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen. Blumen wuchsen bald überall."
 
-# User input in the first column
+# Benutzereingabe in der ersten Spalte
 with col1:
-    user_input = st.text_area("Enter a sentence or query:", value=placeholder_text, height=100)
+    user_input = st.text_area("Geben Sie einen Satz oder eine Abfrage ein:", value=platzhalter_text, height=100)
 
 if user_input:
-    # Tokenize the input
+    # Eingabe tokenisieren
     tokens = tokenizer.tokenize(user_input)
 
-    # Display tokenized result
-    st.subheader("Tokenized Result:")
+    # Tokenisiertes Ergebnis anzeigen
+    st.subheader("Tokenisiertes Ergebnis:")
 
-    # Create a container for tokens with line breaks
+    # Container für Tokens mit Zeilenumbrüchen erstellen
     tokens_html = '<div style="line-height: 1.6; text-align: left; word-break: break-word;">'
     previous_color = None
     new_sentence = True
     for token in tokens:
         color = get_random_color(previous_color)
-        cleaned_token = token.replace('▁', ' ').strip()  # Replace '▁' with space and strip
-        if cleaned_token:  # Only add non-empty tokens
+        cleaned_token = token.replace('▁', ' ').strip()  # '▁' durch Leerzeichen ersetzen und bereinigen
+        if cleaned_token:  # Nur nicht-leere Tokens hinzufügen
             if new_sentence:
                 tokens_html += '<div style="margin-bottom: 6px;">'
             tokens_html += f'<span style="background-color:{color}; padding:3px 8px; border-radius:4px; margin-right:6px; margin-bottom:6px; display:inline-block; font-size:1.05em;">{cleaned_token}</span>'
             if cleaned_token.endswith('.'):
-                tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Increased space after a period
+                tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Größerer Abstand nach einem Punkt
                 new_sentence = True
             else:
                 new_sentence = False
@@ -235,10 +235,10 @@ if user_input:
 
     st.markdown(tokens_html, unsafe_allow_html=True)
 
-    # Display token information
-    st.subheader("Token Information:")
-    st.write(f"Number of tokens: {len(tokens)}")
+    # Token-Informationen anzeigen
+    st.subheader("Token-Informationen:")
+    st.write(f"Anzahl der Tokens: {len(tokens)}")
 
-    # Show token IDs
+    # Token-IDs anzeigen
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
-    st.write("Token IDs:", token_ids)
+    st.write("Token-IDs:", token_ids)
