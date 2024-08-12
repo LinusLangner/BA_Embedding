@@ -5,8 +5,6 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 from transformers import AutoTokenizer
 import random
-import networkx as nx
-import matplotlib.pyplot as plt
 
 hf_token = st.secrets["hf_token"]
 
@@ -110,7 +108,8 @@ else:
     pca_3d = PCA(n_components=3)
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-    # Create 2D scatter plot
+    
+        # Create 2D scatter plot
     fig_2d = go.Figure()
 
     # Add points for each word group
@@ -142,7 +141,7 @@ else:
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
-    # Create 3D scatter plot
+           # Create 3D scatter plot
     fig_3d = go.Figure()
     
     # Add points for each word group
@@ -267,60 +266,3 @@ if user_input:
     # Token-IDs anzeigen
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
     st.write("Token-IDs:", token_ids)
-
-    # Self-Attention Visualisierung
-    st.title("🔗 Self-Attention Visualisierung")
-    
-    # Simulation von Self-Attention-Daten
-    if user_input:
-        tokens = tokenizer.tokenize(user_input)
-        attention_matrix = np.random.rand(len(tokens), len(tokens))  # Zufällige Matrix zur Veranschaulichung
-    
-        # Erstelle ein Netzwerkdiagramm
-        G = nx.DiGraph()
-        for i, token in enumerate(tokens):
-            for j in range(len(tokens)):
-                if i != j:
-                    G.add_edge(tokens[i], tokens[j], weight=attention_matrix[i][j])
-    
-        # Position der Knoten bestimmen (hier: zirkulär)
-        pos = nx.circular_layout(G)
-    
-        # Zeichne das Netzwerkdiagramm
-        plt.figure(figsize=(10, 10))
-        nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=3000)
-        nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
-        
-        # Kantenzeichnung mit angepasster Transparenz je nach Gewichtung
-        edges = nx.draw_networkx_edges(G, pos, arrowstyle='-|>', arrowsize=20,
-                                       edge_color=[G[u][v]['weight'] for u, v in G.edges],
-                                       edge_cmap=plt.cm.Blues, width=2, edge_vmin=0, edge_vmax=1, alpha=0.7)
-    
-        # Keine Farbskala verwenden, um den Fehler zu vermeiden
-        st.pyplot(plt)
-
-    # Positionale Kodierung
-    st.title("📏 Positionale Kodierung Visualisierung")
-
-    def positional_encoding_simple(token_index, max_len=10):
-        return np.array([(token_index / max_len), (token_index / max_len) ** 2])
-
-    # Berechnung der Positionale Kodierungen
-    positional_encodings = [positional_encoding_simple(i) for i in range(len(tokens))]
-
-    # Interaktives Balkendiagramm
-    for i, (token, encoding) in enumerate(zip(tokens, positional_encodings)):
-        st.subheader(f"Token: {token}")
-        st.bar_chart(encoding)
-
-    # Möglichkeit, die Reihenfolge der Tokens zu ändern
-    st.subheader("Ändern Sie die Reihenfolge der Wörter:")
-    tokens_shuffled = st.multiselect('Neue Reihenfolge:', tokens, default=tokens)
-
-    if tokens_shuffled:
-        # Neuberechnung der Positionale Kodierung für die neue Reihenfolge
-        positional_encodings_shuffled = [positional_encoding_simple(i) for i in range(len(tokens_shuffled))]
-
-        for i, (token, encoding) in enumerate(zip(tokens_shuffled, positional_encodings_shuffled)):
-            st.subheader(f"Token: {token}")
-            st.bar_chart(encoding)
