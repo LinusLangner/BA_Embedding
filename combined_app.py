@@ -290,11 +290,13 @@ if user_input:
         plt.figure(figsize=(10, 10))
         nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=3000)
         nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+        
+        # Kantenzeichnung mit angepasster Transparenz je nach Gewichtung
         edges = nx.draw_networkx_edges(G, pos, arrowstyle='-|>', arrowsize=20,
                                        edge_color=[G[u][v]['weight'] for u, v in G.edges],
-                                       edge_cmap=plt.cm.Blues, width=2)
+                                       edge_cmap=plt.cm.Blues, width=2, edge_vmin=0, edge_vmax=1, alpha=0.7)
     
-        plt.colorbar(edges)
+        # Keine Farbskala verwenden, um den Fehler zu vermeiden
         st.pyplot(plt)
 
     # Positionale Kodierung
