@@ -271,34 +271,31 @@ if user_input:
     # Self-Attention Visualisierung
     st.title("🔗 Self-Attention Visualisierung")
     
-    # Self-Attention Visualisierung
-st.title("🔗 Self-Attention Visualisierung")
-
-# Simulation von Self-Attention-Daten
-if user_input:
-    tokens = tokenizer.tokenize(user_input)
-    attention_matrix = np.random.rand(len(tokens), len(tokens))  # Zufällige Matrix zur Veranschaulichung
-
-    # Erstelle ein Netzwerkdiagramm
-    G = nx.DiGraph()
-    for i, token in enumerate(tokens):
-        for j in range(len(tokens)):
-            if i != j:
-                G.add_edge(tokens[i], tokens[j], weight=attention_matrix[i][j])
-
-    # Position der Knoten bestimmen (hier: zirkulär)
-    pos = nx.circular_layout(G)
-
-    # Zeichne das Netzwerkdiagramm
-    plt.figure(figsize=(10, 10))
-    nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=3000)
-    nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
-    edges = nx.draw_networkx_edges(G, pos, arrowstyle='-|>', arrowsize=20,
-                                   edge_color=[G[u][v]['weight'] for u, v in G.edges],
-                                   edge_cmap=plt.cm.Blues, width=2)
-
-    plt.colorbar(edges)
-    st.pyplot(plt)
+    # Simulation von Self-Attention-Daten
+    if user_input:
+        tokens = tokenizer.tokenize(user_input)
+        attention_matrix = np.random.rand(len(tokens), len(tokens))  # Zufällige Matrix zur Veranschaulichung
+    
+        # Erstelle ein Netzwerkdiagramm
+        G = nx.DiGraph()
+        for i, token in enumerate(tokens):
+            for j in range(len(tokens)):
+                if i != j:
+                    G.add_edge(tokens[i], tokens[j], weight=attention_matrix[i][j])
+    
+        # Position der Knoten bestimmen (hier: zirkulär)
+        pos = nx.circular_layout(G)
+    
+        # Zeichne das Netzwerkdiagramm
+        plt.figure(figsize=(10, 10))
+        nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=3000)
+        nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+        edges = nx.draw_networkx_edges(G, pos, arrowstyle='-|>', arrowsize=20,
+                                       edge_color=[G[u][v]['weight'] for u, v in G.edges],
+                                       edge_cmap=plt.cm.Blues, width=2)
+    
+        plt.colorbar(edges)
+        st.pyplot(plt)
 
     # Positionale Kodierung
     st.title("📏 Positionale Kodierung Visualisierung")
