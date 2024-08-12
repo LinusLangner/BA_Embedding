@@ -5,6 +5,8 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 from transformers import AutoTokenizer
 import random
+import networkx as nx
+import matplotlib.pyplot as plt
 
 hf_token = st.secrets["hf_token"]
 
@@ -108,8 +110,7 @@ else:
     pca_3d = PCA(n_components=3)
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-    
-        # Create 2D scatter plot
+    # Create 2D scatter plot
     fig_2d = go.Figure()
 
     # Add points for each word group
@@ -141,7 +142,7 @@ else:
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
-           # Create 3D scatter plot
+    # Create 3D scatter plot
     fig_3d = go.Figure()
     
     # Add points for each word group
@@ -266,3 +267,56 @@ if user_input:
     # Token-IDs anzeigen
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
     st.write("Token-IDs:", token_ids)
+
+    # Self-Attention Visualisierung
+    st.title("🔗 Self-Attention Visualisierung")
+    
+    # Self-Attention Simulation
+    attention_matrix = np.random.rand(len(tokens), len(tokens))  # Zufällige Matrix zur Veranschaulichung
+
+    # Erstelle ein Netzwerkdiagramm
+    G = nx.DiGraph()
+    for i, token in enumerate(tokens):
+        for j in range(len(tokens)):
+            if i != j:
+                G.add_edge(tokens[i], tokens[j], weight=attention_matrix[i][j])
+
+    # Position der Knoten bestimmen (hier: zirkulär)
+    pos = nx.circular_layout(G)
+
+    # Zeichne das Netzwerkdiagramm
+    plt.figure(figsize=(10, 10))
+    edges = G.edges(data=True)
+    nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=3000, font_size=12, font_weight='bold', 
+            edges=edges, width=[G[u][v]['weight'] for u, v in G.edges])
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels={(u, v): f'{d["weight"]:.2f}' for u, v, d in edges})
+
+    # Zeige die Visualisierung in Streamlit
+    st.pyplot(plt)
+
+    # Positionale Kodierung
+    st.title("📏 Positionale Kodierung Visualisierung")
+
+    def positional_encoding_simple(token_index, max_len=10):
+        return np.array([(token_index / max_len), (token_index / max_len) ** 2])
+
+    # Berechnung der Positionale Kodierungen
+    positional_encodings = [positional_encoding_simple(i) for i in range(len(tokens))]
+
+    # Interaktives Balkendiagramm
+    for i, (token, encoding) in enumerate(zip(tokens, positional_encodings)):
+        st.subheader(f"Token: {token}")
+        st.bar_chart(encoding)
+
+    # Möglichkeit, die Reihenfolge der Tokens zu ändern
+    st.subheader("Ändern Sie die Reihenfolge der Wörter:")
+    tokens_shuffled = st.multiselect('Neue Reihenfolge:', tokens, default=tokens)
+
+    if tokens_shuffled:
+        # Neuberechnung der Positionale Kodierung für die neue Reihenfolge
+        positional_encodings_shuffled = [positional_encoding_simple(i) for i in range(len(tokens_shuffled))]
+
+        for i, (token, encoding) in enumerate(zip(tokens_shuffled, positional_encodings_shuffled)):
+            st.subheader(f"Token: {token}")
+            st.bar_chart(encoding)
