@@ -1,7 +1,6 @@
 import streamlit as st
 import gensim.downloader as api
 import numpy as np
-from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 from transformers import AutoTokenizer
 import random
@@ -9,7 +8,7 @@ import random
 hf_token = st.secrets["hf_token"]
 
 # Page settings
-st.set_page_config(page_title="Wort-Embeddings & Satz-Tokenizer", layout="wide")
+st.set_page_config(page_title="Transformer Visualisierungen", layout="wide")
 
 # General style guidelines for consistency
 st.markdown("""
@@ -61,156 +60,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Section 1: Word Embeddings Visualizations
-st.title("🔍 Wort-Embeddings Visualisierungen")
-
-# Load GloVe model only once and cache
-@st.cache_resource
-def load_model():
-    return api.load('glove-wiki-gigaword-50')
-
-# Load model
-model = load_model()
-
-# Word groups
-tier_worte = ["dog", "cat", "lion", "elephant", "bird", "fish", "horse", "tiger", "whale", "bear"]
-obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "peanut", "mango"]
-farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "orange", "black", "white", "brown"]
-emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
-
-# User input for custom words
-st.subheader("Fügen Sie Ihre eigenen Wörter hinzu")
-user_words = st.text_input("Geben Sie Wörter ein, getrennt durch Kommas:", "")
-user_words = [word.strip().lower() for word in user_words.split(',') if word.strip()]
-
-# Combine all words
-alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte + user_words
-
-# Get embeddings for all words, only if the word is in the model
-embeddings = []
-valid_words = []
-for word in alle_worte:
-    if word.lower() in model:
-        embeddings.append(model[word.lower()])
-        valid_words.append(word)
-    else:
-        st.warning(f"Das Wort '{word}' wurde im GloVe-Modell nicht gefunden und wird ignoriert.")
-
-embeddings = np.array(embeddings)
-
-if len(embeddings) == 0:
-    st.error("Keines der Wörter wurde im GloVe-Modell gefunden.")
-else:
-    # 2D and 3D PCA
-    pca_2d = PCA(n_components=2)
-    reduzierte_embeddings_2d = pca_2d.fit_transform(embeddings)
-
-    pca_3d = PCA(n_components=3)
-    reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
-
-    
-        # Create 2D scatter plot
-    fig_2d = go.Figure()
-
-    # Add points for each word group
-    colors = ['green', 'orange', 'blue', 'red', '#00FFFF']  # Cyan for user inputs
-    group_names = ["Tier", "Obst", "Farbe", "Emotion", "Benutzer Eingaben"]
-
-    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
-        valid_indices = [j for j, word in enumerate(valid_words) if word in words]
-        if valid_indices:
-            fig_2d.add_trace(go.Scatter(
-                x=reduzierte_embeddings_2d[valid_indices, 0],
-                y=reduzierte_embeddings_2d[valid_indices, 1],
-                mode='markers+text',
-                text=[valid_words[j] for j in valid_indices],
-                marker=dict(
-                    size=12,
-                    color=colors[i],
-                ),
-                textposition="top center",
-                name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
-            ))
-
-    # Update 2D layout
-    fig_2d.update_layout(
-        xaxis_title='PCA 1',
-        yaxis_title='PCA 2',
-        height=600,
-        margin=dict(l=20, r=20, t=30, b=20),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
-    )
-
-           # Create 3D scatter plot
-    fig_3d = go.Figure()
-    
-    # Add points for each word group
-    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
-        valid_indices = [j for j, word in enumerate(valid_words) if word in words]
-        if valid_indices:
-            fig_3d.add_trace(go.Scatter3d(
-                x=reduzierte_embeddings_3d[valid_indices, 0],
-                y=reduzierte_embeddings_3d[valid_indices, 1],
-                z=reduzierte_embeddings_3d[valid_indices, 2],
-                mode='markers+text',
-                text=[valid_words[j] for j in valid_indices],
-                marker=dict(
-                    size=8,
-                    color=colors[i],
-                ),
-                textposition="top center",
-                name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
-            ))
-
-    # Update 3D layout
-    fig_3d.update_layout(
-        scene=dict(
-            xaxis_title='PCA 1',
-            yaxis_title='PCA 2',
-            zaxis_title='PCA 3',
-        ),
-        height=600,
-        margin=dict(l=20, r=20, t=30, b=20),
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
-    )
-
-    # Layout and display
-    st.subheader("2D und 3D Wort-Embeddings Visualisierungen")
-
-    # Create two columns
-    col1, col2 = st.columns(2)
-
-    # Display charts side by side
-    with col1:
-        st.write("#### 2D Visualisierung")
-        st.plotly_chart(fig_2d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
-
-    with col2:
-        st.write("#### 3D Visualisierung")
-        st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
-
-# Add larger space for clear separation
-st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
-
-# Abschnitt 2: Satz-Tokenizer
-st.title("📝 Satz-Tokenizer")
-
-# Definieren einer Reihe von subtilen, halbtransparenten Farben
-FARBEN = [
-    "rgba(255, 99, 71, 0.3)",   # Tomate
-    "rgba(255, 165, 0, 0.3)",   # Orange
-    "rgba(255, 215, 0, 0.3)",   # Gold
-    "rgba(154, 205, 50, 0.3)",  # Gelbgrün
-    "rgba(0, 255, 127, 0.3)",   # Frühlinggrün
-    "rgba(100, 149, 237, 0.3)", # Kornblumenblau
-    "rgba(138, 43, 226, 0.3)",  # Blauviolett
-    "rgba(255, 192, 203, 0.3)", # Rosa
-]
-
-# Funktion, um eine zufällige Farbe auszuwählen, die keine aufeinanderfolgenden Wiederholungen enthält
-def get_random_color(previous_color=None):
-    available_colors = [c for c in FARBEN if c != previous_color]
-    return random.choice(available_colors)
+# Section 1: Self-Attention Visualizations
+st.title("🔍 Self-Attention Visualisierung")
 
 # Tokenizer initialisieren
 @st.cache_resource
@@ -219,50 +70,86 @@ def load_tokenizer():
 
 tokenizer = load_tokenizer()
 
-# Drei Spalten erstellen
-col1, col2, col3 = st.columns([2, 1, 1])
-
-# Platzhaltertext
-platzhalter_text = "Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen. Blumen wuchsen bald überall."
-
-# Benutzereingabe in der ersten Spalte
-with col1:
-    user_input = st.text_area("Geben Sie einen Satz oder eine Abfrage ein:", value=platzhalter_text, height=100)
+# User input
+st.subheader("Geben Sie einen Satz ein:")
+user_input = st.text_area("Satz eingeben:", value="Der schnelle braune Fuchs springt über den faulen Hund.", height=100)
 
 if user_input:
     # Eingabe tokenisieren
     tokens = tokenizer.tokenize(user_input)
-
-    # Tokenisiertes Ergebnis anzeigen
-    st.subheader("Tokenisiertes Ergebnis:")
-
-    # Container für Tokens mit Zeilenumbrüchen erstellen
-    tokens_html = '<div style="line-height: 1.6; text-align: left; word-break: break-word;">'
-    previous_color = None
-    new_sentence = True
-    for token in tokens:
-        color = get_random_color(previous_color)
-        cleaned_token = token.replace('▁', ' ').strip()  # '▁' durch Leerzeichen ersetzen und bereinigen
-        if cleaned_token:  # Nur nicht-leere Tokens hinzufügen
-            if new_sentence:
-                tokens_html += '<div style="margin-bottom: 6px;">'
-            tokens_html += f'<span style="background-color:{color}; padding:3px 8px; border-radius:4px; margin-right:6px; margin-bottom:6px; display:inline-block; font-size:1.05em;">{cleaned_token}</span>'
-            if cleaned_token.endswith('.'):
-                tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Größerer Abstand nach einem Punkt
-                new_sentence = True
-            else:
-                new_sentence = False
-        previous_color = color
-    if not new_sentence:
-        tokens_html += '</div>'
-    tokens_html += '</div>'
-
-    st.markdown(tokens_html, unsafe_allow_html=True)
-
-    # Token-Informationen anzeigen
-    st.subheader("Token-Informationen:")
-    st.write(f"Anzahl der Tokens: {len(tokens)}")
-
-    # Token-IDs anzeigen
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
-    st.write("Token-IDs:", token_ids)
+    
+    st.subheader("Tokens:")
+    st.write(tokens)
+
+    # Self-Attention Simulation
+    attention_matrix = np.random.rand(len(tokens), len(tokens))  # Zufällige Matrix zur Veranschaulichung
+
+    fig_attention = go.Figure(data=go.Heatmap(
+        z=attention_matrix,
+        x=tokens,
+        y=tokens,
+        colorscale='Viridis'))
+    
+    fig_attention.update_layout(
+        title="Self-Attention Gewichtungen",
+        xaxis_title="Tokens",
+        yaxis_title="Tokens",
+        height=600,
+        margin=dict(l=20, r=20, t=30, b=20)
+    )
+    
+    st.plotly_chart(fig_attention, use_container_width=True)
+
+# Section 2: Positionale Kodierung Visualisierung
+st.title("📏 Positionale Kodierung Visualisierung")
+
+def positional_encoding(token_index, d_model, max_len=5000):
+    pe = np.zeros(d_model)
+    for i in range(0, d_model, 2):
+        pe[i] = np.sin(token_index / (10000 ** (i / d_model)))
+        pe[i + 1] = np.cos(token_index / (10000 ** ((i + 1) / d_model)))
+    return pe
+
+# Berechnung der Positionale Kodierungen
+positional_encodings = [positional_encoding(i, len(token_ids)) for i in range(len(token_ids))]
+
+fig_pe = go.Figure(data=go.Heatmap(
+    z=positional_encodings,
+    x=[f"Dim {i+1}" for i in range(len(positional_encodings[0]))],
+    y=tokens,
+    colorscale='Blues'))
+
+fig_pe.update_layout(
+    title="Positionale Kodierungen",
+    xaxis_title="Dimensionen",
+    yaxis_title="Tokens",
+    height=600,
+    margin=dict(l=20, r=20, t=30, b=20)
+)
+
+st.plotly_chart(fig_pe, use_container_width=True)
+
+# Möglichkeit, die Reihenfolge der Tokens zu ändern
+st.subheader("Ändern Sie die Reihenfolge der Wörter:")
+tokens_shuffled = st.multiselect('Neue Reihenfolge:', tokens, default=tokens)
+
+if tokens_shuffled:
+    # Neuberechnung der Positionale Kodierung für die neue Reihenfolge
+    positional_encodings_shuffled = [positional_encoding(i, len(token_ids)) for i in range(len(tokens_shuffled))]
+
+    fig_pe_shuffled = go.Figure(data=go.Heatmap(
+        z=positional_encodings_shuffled,
+        x=[f"Dim {i+1}" for i in range(len(positional_encodings_shuffled[0]))],
+        y=tokens_shuffled,
+        colorscale='Blues'))
+
+    fig_pe_shuffled.update_layout(
+        title="Positionale Kodierungen (geänderte Reihenfolge)",
+        xaxis_title="Dimensionen",
+        yaxis_title="Tokens",
+        height=600,
+        margin=dict(l=20, r=20, t=30, b=20)
+    )
+
+    st.plotly_chart(fig_pe_shuffled, use_container_width=True)
