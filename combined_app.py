@@ -268,29 +268,25 @@ if user_input:
     st.write("Token-IDs:", token_ids)
 
 
-st.markdown("""
-## Self-Attention in Transformers
+def simple_word_embedding(word):
+    # This is a very simple embedding method. In a real scenario, you'd use pre-trained embeddings.
+    return np.array([ord(c) for c in word])
 
-Self-attention is a key mechanism in Transformer models. It allows the model to weigh the importance of different words in a sentence when processing each word. This helps the model understand context and relationships between words, regardless of their position in the sentence.
-
-In the visualizer below, you can enter a sentence and see a simplified representation of self-attention weights. The heatmap shows how much attention each word (on the y-axis) pays to every other word (on the x-axis) when processing the sentence.
-
-Brighter colors indicate higher attention weights. This demonstrates how a Transformer model might focus on different parts of the input when processing each word.
-""")
-
-# [Your Self-Attention Visualizer code here]
-
-st.markdown("""
-In a real Transformer model, these weights would be learned during training and would capture meaningful relationships between words. Our visualizer uses random weights for demonstration purposes.
-
-This mechanism allows Transformers to handle long-range dependencies in text more effectively than previous architectures like RNNs.
-""")
-
-def generate_attention_weights(sentence):
+def calculate_attention_weights(sentence):
     words = sentence.split()
-    weights = np.random.rand(len(words), len(words))
-    # Normalize weights
-    weights /= weights.sum(axis=1, keepdims=True)
+    
+    # Create simple word embeddings
+    embeddings = np.array([simple_word_embedding(word) for word in words])
+    
+    # Normalize embeddings
+    embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
+    
+    # Calculate attention weights using dot product
+    weights = np.dot(embeddings, embeddings.T)
+    
+    # Apply softmax to get probabilities
+    weights = np.exp(weights) / np.sum(np.exp(weights), axis=1, keepdims=True)
+    
     return words, weights
 
 def plot_attention_heatmap(words, weights):
@@ -312,13 +308,13 @@ def plot_attention_heatmap(words, weights):
     return fig
 
 # Add this to your existing Streamlit app
-st.title("Self-Attention Visualizer")
+st.title("Realistic Self-Attention Visualizer")
 
 # User input
 user_sentence = st.text_input("Enter a sentence:", "The cat sat on the mat.")
 
 if st.button("Generate Attention"):
-    words, attention_weights = generate_attention_weights(user_sentence)
+    words, attention_weights = calculate_attention_weights(user_sentence)
     
     # Display the heatmap
     fig = plot_attention_heatmap(words, attention_weights)
@@ -328,3 +324,20 @@ if st.button("Generate Attention"):
     st.subheader("Attention Weights:")
     for i, word in enumerate(words):
         st.write(f"{word}: {attention_weights[i].tolist()}")
+
+st.markdown("""
+### How This Works
+
+1. **Word Embeddings**: Each word is converted into a vector based on its characters. This is a simplified version of word embeddings.
+
+2. **Attention Calculation**: The dot product between these vectors is used to calculate how similar (and thus how much attention) each word pays to every other word.
+
+3. **Softmax**: The results are normalized using softmax to get probabilities.
+
+This simplified model will show some realistic patterns:
+- Words will generally pay more attention to themselves.
+- Similar words or related concepts may have higher attention weights between them.
+- Common words might receive more distributed attention.
+
+Remember, this is still a simplified model. Real Transformer models use more complex methods and learned parameters to calculate attention.
+""")
