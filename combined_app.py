@@ -269,35 +269,39 @@ if user_input:
 
 
 import streamlit as st
+import torch
+from transformers import AutoTokenizer, AutoModel
 import numpy as np
 import plotly.graph_objs as go
 
-def simple_word_embedding(word, max_len=10):
-    # Convert word to lowercase and take only the first max_len characters
-    word = word.lower()[:max_len]
-    # Pad the word with zeros if it's shorter than max_len
-    embedding = [ord(c) for c in word] + [0] * (max_len - len(word))
-    return np.array(embedding)
+@st.cache_resource
+def load_model_and_tokenizer():
+    model_name = "sentence-transformers/all-MiniLM-L6-v2"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name)
+    return tokenizer, model
 
-def calculate_attention_weights(sentence):
-    words = sentence.split()
+def get_word_embeddings(tokenizer, model, sentence):
+    inputs = tokenizer(sentence, return_tensors="pt", add_special_tokens=False)
+    with torch.no_grad():
+        outputs = model(**inputs)
     
-    # Create simple word embeddings
-    embeddings = np.array([simple_word_embedding(word) for word in words])
+    # Get the embeddings
+    embeddings = outputs.last_hidden_state.squeeze(0)
     
-    # Normalize embeddings
-    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
-    norms = np.where(norms == 0, 1e-10, norms)  # Avoid division by zero
-    embeddings = embeddings / norms
+    # Get the original words
+    words = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
     
+    return words, embeddings
+
+def calculate_attention_weights(embeddings):
     # Calculate attention weights using dot product
-    weights = np.dot(embeddings, embeddings.T)
+    attention_weights = torch.matmul(embeddings, embeddings.transpose(0, 1))
     
     # Apply softmax to get probabilities
-    weights = np.exp(weights - np.max(weights, axis=1, keepdims=True))
-    weights = weights / np.sum(weights, axis=1, keepdims=True)
+    attention_weights = torch.nn.functional.softmax(attention_weights, dim=-1)
     
-    return words, weights
+    return attention_weights.numpy()
 
 def plot_attention_heatmap(words, weights):
     fig = go.Figure(data=go.Heatmap(
@@ -317,15 +321,18 @@ def plot_attention_heatmap(words, weights):
 
     return fig
 
-# Add this to your existing Streamlit app
-st.title("Robust Self-Attention Visualizer")
+# Load model and tokenizer
+tokenizer, model = load_model_and_tokenizer()
+
+st.title("Self-Attention Visualizer with Real Embeddings")
 
 # User input
 user_sentence = st.text_input("Enter a sentence:", "The cat sat on the mat.")
 
 if st.button("Generate Attention"):
     try:
-        words, attention_weights = calculate_attention_weights(user_sentence)
+        words, embeddings = get_word_embeddings(tokenizer, model, user_sentence)
+        attention_weights = calculate_attention_weights(embeddings)
         
         # Display the heatmap
         fig = plot_attention_heatmap(words, attention_weights)
@@ -341,16 +348,19 @@ if st.button("Generate Attention"):
 st.markdown("""
 ### How This Works
 
-1. **Word Embeddings**: Each word is converted into a vector based on its characters (up to 10 characters). This is a simplified version of word embeddings.
+1. **Word Embeddings**: We use a pre-trained Transformer model from Hugging Face to generate real word embeddings.
 
-2. **Attention Calculation**: The dot product between these vectors is used to calculate how similar (and thus how much attention) each word pays to every other word.
+2. **Tokenization**: The sentence is tokenized using the model's tokenizer, which may split words into subwords.
 
-3. **Softmax**: The results are normalized using softmax to get probabilities.
+3. **Embedding Generation**: The model generates embeddings for each token.
 
-This simplified model will show some realistic patterns:
-- Words will generally pay more attention to themselves.
-- Similar words or related concepts may have higher attention weights between them.
-- Common words might receive more distributed attention.
+4. **Attention Calculation**: We calculate attention weights using the dot product between token embeddings, similar to how it's done in Transformer models.
 
-Remember, this is still a simplified model. Real Transformer models use more complex methods and learned parameters to calculate attention.
+5. **Softmax**: The results are normalized using softmax to get probabilities.
+
+This model shows realistic attention patterns:
+- Words (or subwords) will generally pay more attention to themselves and related concepts.
+- The attention patterns will reflect real semantic and syntactic relationships learned by the model.
+
+Note: This is using a simplified attention mechanism. Real Transformer models use more complex methods with multiple attention heads and learned query, key, and value projections.
 """)
