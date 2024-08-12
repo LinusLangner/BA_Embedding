@@ -268,9 +268,23 @@ if user_input:
     st.write("Token-IDs:", token_ids)
 
 
-import streamlit as st
-import numpy as np
-import plotly.graph_objs as go
+st.markdown("""
+## Self-Attention in Transformers
+
+Self-attention is a key mechanism in Transformer models. It allows the model to weigh the importance of different words in a sentence when processing each word. This helps the model understand context and relationships between words, regardless of their position in the sentence.
+
+In the visualizer below, you can enter a sentence and see a simplified representation of self-attention weights. The heatmap shows how much attention each word (on the y-axis) pays to every other word (on the x-axis) when processing the sentence.
+
+Brighter colors indicate higher attention weights. This demonstrates how a Transformer model might focus on different parts of the input when processing each word.
+""")
+
+# [Your Self-Attention Visualizer code here]
+
+st.markdown("""
+In a real Transformer model, these weights would be learned during training and would capture meaningful relationships between words. Our visualizer uses random weights for demonstration purposes.
+
+This mechanism allows Transformers to handle long-range dependencies in text more effectively than previous architectures like RNNs.
+""")
 
 def generate_attention_weights(sentence):
     words = sentence.split()
