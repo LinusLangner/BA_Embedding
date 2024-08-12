@@ -266,3 +266,51 @@ if user_input:
     # Token-IDs anzeigen
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
     st.write("Token-IDs:", token_ids)
+
+
+import streamlit as st
+import numpy as np
+import plotly.graph_objs as go
+
+def generate_attention_weights(sentence):
+    words = sentence.split()
+    weights = np.random.rand(len(words), len(words))
+    # Normalize weights
+    weights /= weights.sum(axis=1, keepdims=True)
+    return words, weights
+
+def plot_attention_heatmap(words, weights):
+    fig = go.Figure(data=go.Heatmap(
+        z=weights,
+        x=words,
+        y=words,
+        colorscale='Blues',
+        hoverongaps=False))
+
+    fig.update_layout(
+        title='Self-Attention Weights',
+        xaxis_title='Target Words',
+        yaxis_title='Source Words',
+        height=500,
+        width=700
+    )
+
+    return fig
+
+# Add this to your existing Streamlit app
+st.title("Self-Attention Visualizer")
+
+# User input
+user_sentence = st.text_input("Enter a sentence:", "The cat sat on the mat.")
+
+if st.button("Generate Attention"):
+    words, attention_weights = generate_attention_weights(user_sentence)
+    
+    # Display the heatmap
+    fig = plot_attention_heatmap(words, attention_weights)
+    st.plotly_chart(fig)
+
+    # Display attention weights as text
+    st.subheader("Attention Weights:")
+    for i, word in enumerate(words):
+        st.write(f"{word}: {attention_weights[i].tolist()}")
