@@ -108,13 +108,14 @@ else:
     pca_3d = PCA(n_components=3)
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-    # Create 2D scatter plot
+    
+        # Create 2D scatter plot
     fig_2d = go.Figure()
 
     # Add points for each word group
-    colors = ['green', 'orange', 'blue', 'red', '#FF1493']  # Bright pink for user inputs
+    colors = ['green', 'orange', 'blue', 'red', '#00FFFF']  # Cyan for user inputs
     group_names = ["Tier", "Obst", "Farbe", "Emotion", "Benutzer Eingaben"]
-    
+
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
         if valid_indices:
@@ -128,7 +129,7 @@ else:
                     color=colors[i],
                 ),
                 textposition="top center",
-                name=f'{group_names[i]}-bezogene Wörter'
+                name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
             ))
 
     # Update 2D layout
@@ -140,9 +141,9 @@ else:
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
-    # Create 3D scatter plot
+           # Create 3D scatter plot
     fig_3d = go.Figure()
-
+    
     # Add points for each word group
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
@@ -158,7 +159,7 @@ else:
                     color=colors[i],
                 ),
                 textposition="top center",
-                name=f'{group_names[i]}-bezogene Wörter'
+                name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
             ))
 
     # Update 3D layout
