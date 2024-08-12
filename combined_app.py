@@ -268,9 +268,16 @@ if user_input:
     st.write("Token-IDs:", token_ids)
 
 
-def simple_word_embedding(word):
-    # This is a very simple embedding method. In a real scenario, you'd use pre-trained embeddings.
-    return np.array([ord(c) for c in word])
+import streamlit as st
+import numpy as np
+import plotly.graph_objs as go
+
+def simple_word_embedding(word, max_len=10):
+    # Convert word to lowercase and take only the first max_len characters
+    word = word.lower()[:max_len]
+    # Pad the word with zeros if it's shorter than max_len
+    embedding = [ord(c) for c in word] + [0] * (max_len - len(word))
+    return np.array(embedding)
 
 def calculate_attention_weights(sentence):
     words = sentence.split()
@@ -279,13 +286,16 @@ def calculate_attention_weights(sentence):
     embeddings = np.array([simple_word_embedding(word) for word in words])
     
     # Normalize embeddings
-    embeddings = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
+    norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+    norms = np.where(norms == 0, 1e-10, norms)  # Avoid division by zero
+    embeddings = embeddings / norms
     
     # Calculate attention weights using dot product
     weights = np.dot(embeddings, embeddings.T)
     
     # Apply softmax to get probabilities
-    weights = np.exp(weights) / np.sum(np.exp(weights), axis=1, keepdims=True)
+    weights = np.exp(weights - np.max(weights, axis=1, keepdims=True))
+    weights = weights / np.sum(weights, axis=1, keepdims=True)
     
     return words, weights
 
@@ -308,27 +318,30 @@ def plot_attention_heatmap(words, weights):
     return fig
 
 # Add this to your existing Streamlit app
-st.title("Realistic Self-Attention Visualizer")
+st.title("Robust Self-Attention Visualizer")
 
 # User input
 user_sentence = st.text_input("Enter a sentence:", "The cat sat on the mat.")
 
 if st.button("Generate Attention"):
-    words, attention_weights = calculate_attention_weights(user_sentence)
-    
-    # Display the heatmap
-    fig = plot_attention_heatmap(words, attention_weights)
-    st.plotly_chart(fig)
+    try:
+        words, attention_weights = calculate_attention_weights(user_sentence)
+        
+        # Display the heatmap
+        fig = plot_attention_heatmap(words, attention_weights)
+        st.plotly_chart(fig)
 
-    # Display attention weights as text
-    st.subheader("Attention Weights:")
-    for i, word in enumerate(words):
-        st.write(f"{word}: {attention_weights[i].tolist()}")
+        # Display attention weights as text
+        st.subheader("Attention Weights:")
+        for i, word in enumerate(words):
+            st.write(f"{word}: {attention_weights[i].tolist()}")
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
 
 st.markdown("""
 ### How This Works
 
-1. **Word Embeddings**: Each word is converted into a vector based on its characters. This is a simplified version of word embeddings.
+1. **Word Embeddings**: Each word is converted into a vector based on its characters (up to 10 characters). This is a simplified version of word embeddings.
 
 2. **Attention Calculation**: The dot product between these vectors is used to calculate how similar (and thus how much attention) each word pays to every other word.
 
