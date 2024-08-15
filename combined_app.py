@@ -62,7 +62,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Section 1: Word Embeddings Visualizations
-st.title("🔍 Wort-Embeddings Visualisierungen")
+st.title("🔍 Wort-Embeddings Visualisierungen Hallo Papa")
 
 # Load GloVe model only once and cache
 @st.cache_resource
