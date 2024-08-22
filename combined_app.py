@@ -108,8 +108,9 @@ else:
     pca_3d = PCA(n_components=3)
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-    # Define marker shapes for different groups
-    shapes = ['circle', 'square', 'diamond', 'triangle-up', 'cross']
+    # Define marker shapes and sizes for different groups
+    shapes_2d = ['circle', 'square', 'diamond', 'triangle-up', 'cross']
+    sizes_3d = [8, 10, 12, 14, 16]  # Simulate different "shapes" using sizes in 3D
 
     # 2D scatter plot
     fig_2d = go.Figure()
@@ -129,18 +130,23 @@ else:
                 marker=dict(
                     size=12,
                     color=colors[i],
-                    symbol=shapes[i]
+                    symbol=shapes_2d[i]
                 ),
                 textposition="top center",
                 name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
             ))
 
-    # Update 2D layout
+    # Update 2D layout with initial zoom out
+    x_min, x_max = reduzierte_embeddings_2d[:, 0].min(), reduzierte_embeddings_2d[:, 0].max()
+    y_min, y_max = reduzierte_embeddings_2d[:, 1].min(), reduzierte_embeddings_2d[:, 1].max()
+
     fig_2d.update_layout(
         xaxis_title='PCA 1',
         yaxis_title='PCA 2',
         height=600,
         margin=dict(l=20, r=20, t=30, b=20),
+        xaxis=dict(range=[x_min - 1, x_max + 1]),
+        yaxis=dict(range=[y_min - 1, y_max + 1]),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
@@ -158,7 +164,7 @@ else:
                 mode='markers+text',
                 text=[valid_words[j] for j in valid_indices],
                 marker=dict(
-                    size=8,
+                    size=sizes_3d[i],
                     color=colors[i],
                 ),
                 textposition="top center",
