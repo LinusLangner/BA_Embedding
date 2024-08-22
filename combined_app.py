@@ -160,7 +160,6 @@ else:
                 marker=dict(
                     size=8,
                     color=colors[i],
-                    symbol=shapes[i]
                 ),
                 textposition="top center",
                 name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
