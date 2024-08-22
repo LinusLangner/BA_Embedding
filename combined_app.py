@@ -108,8 +108,10 @@ else:
     pca_3d = PCA(n_components=3)
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-    
-        # Create 2D scatter plot
+    # Define marker shapes for different groups
+    shapes = ['circle', 'square', 'diamond', 'triangle-up', 'cross']
+
+    # 2D scatter plot
     fig_2d = go.Figure()
 
     # Add points for each word group
@@ -127,6 +129,7 @@ else:
                 marker=dict(
                     size=12,
                     color=colors[i],
+                    symbol=shapes[i]
                 ),
                 textposition="top center",
                 name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
@@ -141,9 +144,9 @@ else:
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
-           # Create 3D scatter plot
+    # 3D scatter plot
     fig_3d = go.Figure()
-    
+
     # Add points for each word group
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
@@ -157,6 +160,7 @@ else:
                 marker=dict(
                     size=8,
                     color=colors[i],
+                    symbol=shapes[i]
                 ),
                 textposition="top center",
                 name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
@@ -266,101 +270,3 @@ if user_input:
     # Token-IDs anzeigen
     token_ids = tokenizer.encode(user_input, add_special_tokens=False)
     st.write("Token-IDs:", token_ids)
-
-
-import streamlit as st
-import torch
-from transformers import AutoTokenizer, AutoModel
-import numpy as np
-import plotly.graph_objs as go
-
-@st.cache_resource
-def load_model_and_tokenizer():
-    model_name = "sentence-transformers/all-MiniLM-L6-v2"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name)
-    return tokenizer, model
-
-def get_word_embeddings(tokenizer, model, sentence):
-    inputs = tokenizer(sentence, return_tensors="pt", add_special_tokens=False)
-    with torch.no_grad():
-        outputs = model(**inputs)
-    
-    # Get the embeddings
-    embeddings = outputs.last_hidden_state.squeeze(0)
-    
-    # Get the original words
-    words = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
-    
-    return words, embeddings
-
-def calculate_attention_weights(embeddings):
-    # Calculate attention weights using dot product
-    attention_weights = torch.matmul(embeddings, embeddings.transpose(0, 1))
-    
-    # Apply softmax to get probabilities
-    attention_weights = torch.nn.functional.softmax(attention_weights, dim=-1)
-    
-    return attention_weights.numpy()
-
-def plot_attention_heatmap(words, weights):
-    fig = go.Figure(data=go.Heatmap(
-        z=weights,
-        x=words,
-        y=words,
-        colorscale='Blues',
-        hoverongaps=False))
-
-    fig.update_layout(
-        title='Self-Attention Weights',
-        xaxis_title='Target Words',
-        yaxis_title='Source Words',
-        height=500,
-        width=700
-    )
-
-    return fig
-
-# Load model and tokenizer
-tokenizer, model = load_model_and_tokenizer()
-
-st.title("Self-Attention Visualizer with Real Embeddings")
-
-# User input
-user_sentence = st.text_input("Enter a sentence:", "The cat sat on the mat.")
-
-if st.button("Generate Attention"):
-    try:
-        words, embeddings = get_word_embeddings(tokenizer, model, user_sentence)
-        attention_weights = calculate_attention_weights(embeddings)
-        
-        # Display the heatmap
-        fig = plot_attention_heatmap(words, attention_weights)
-        st.plotly_chart(fig)
-
-        # Display attention weights as text
-        st.subheader("Attention Weights:")
-        for i, word in enumerate(words):
-            st.write(f"{word}: {attention_weights[i].tolist()}")
-    except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
-
-st.markdown("""
-### How This Works
-
-1. **Word Embeddings**: We use a pre-trained Transformer model from Hugging Face to generate real word embeddings.
-
-2. **Tokenization**: The sentence is tokenized using the model's tokenizer, which may split words into subwords.
-
-3. **Embedding Generation**: The model generates embeddings for each token.
-
-4. **Attention Calculation**: We calculate attention weights using the dot product between token embeddings, similar to how it's done in Transformer models.
-
-5. **Softmax**: The results are normalized using softmax to get probabilities.
-
-This model shows realistic attention patterns:
-- Words (or subwords) will generally pay more attention to themselves and related concepts.
-- The attention patterns will reflect real semantic and syntactic relationships learned by the model.
-
-Note: This is using a simplified attention mechanism. Real Transformer models use more complex methods with multiple attention heads and learned query, key, and value projections.
-""")
