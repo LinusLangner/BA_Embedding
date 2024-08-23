@@ -1,4 +1,4 @@
-deimport streamlit as st
+import streamlit as st
 import gensim.downloader as api
 import numpy as np
 from sklearn.decomposition import PCA
