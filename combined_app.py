@@ -3,7 +3,7 @@ import gensim.downloader as api
 import numpy as np
 from sklearn.decomposition import PCA
 import plotly.graph_objs as go
-import tiktoken
+from transformers import AutoTokenizer
 import random
 
 hf_token = st.secrets["hf_token"]
@@ -221,10 +221,10 @@ def get_random_color(previous_color=None):
     available_colors = [c for c in FARBEN if c != previous_color]
     return random.choice(available_colors)
 
-# Load the GPT-4o tokenizer
+# Tokenizer initialisieren
 @st.cache_resource
 def load_tokenizer():
-    return tiktoken.get_encoding("o200k_base")  # GPT-4o's tokenizer
+    return AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=hf_token)
 
 tokenizer = load_tokenizer()
 
@@ -240,7 +240,7 @@ with col1:
 
 if user_input:
     # Eingabe tokenisieren
-    tokens = tokenizer.encode(user_input)
+    tokens = tokenizer.tokenize(user_input)
 
     # Tokenisiertes Ergebnis anzeigen
     st.subheader("Tokenisiertes Ergebnis:")
