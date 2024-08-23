@@ -3,7 +3,7 @@ import gensim.downloader as api
 import numpy as np
 from sklearn.decomposition import PCA
 import plotly.graph_objs as go
-from transformers import AutoTokenizer
+import tiktoken
 import random
 
 hf_token = st.secrets["hf_token"]
@@ -221,12 +221,17 @@ def get_random_color(previous_color=None):
     available_colors = [c for c in FARBEN if c != previous_color]
     return random.choice(available_colors)
 
-# Tokenizer initialisieren
+# Funktion zur Tokenisierung unter Verwendung von tiktoken
 @st.cache_resource
-def load_tokenizer():
-    return AutoTokenizer.from_pretrained("mistralai/Mixtral-8x7B-Instruct-v0.1", use_auth_token=hf_token)
+def load_tokenizer(encoding_name="cl100k_base"):
+    return tiktoken.get_encoding(encoding_name)
 
-tokenizer = load_tokenizer()
+def tokens_from_string(string: str, encoding_name: str):
+    """Returns the tokens in a text string."""
+    encoding = load_tokenizer(encoding_name)
+    token_ids = encoding.encode(string)
+    tokens = [encoding.decode_single_token_bytes(token_id).decode('utf-8') for token_id in token_ids]
+    return tokens, token_ids
 
 # Drei Spalten erstellen
 col1, col2, col3 = st.columns([2, 1, 1])
@@ -240,7 +245,7 @@ with col1:
 
 if user_input:
     # Eingabe tokenisieren
-    tokens = tokenizer.tokenize(user_input)
+    tokens, token_ids = tokens_from_string(user_input, "cl100k_base")
 
     # Tokenisiertes Ergebnis anzeigen
     st.subheader("Tokenisiertes Ergebnis:")
@@ -251,16 +256,12 @@ if user_input:
     new_sentence = True
     for token in tokens:
         color = get_random_color(previous_color)
-        cleaned_token = token.replace('▁', ' ').strip()  # '▁' durch Leerzeichen ersetzen und bereinigen
-        if cleaned_token:  # Nur nicht-leere Tokens hinzufügen
-            if new_sentence:
-                tokens_html += '<div style="margin-bottom: 6px;">'
-            tokens_html += f'<span style="background-color:{color}; padding:3px 8px; border-radius:4px; margin-right:6px; margin-bottom:6px; display:inline-block; font-size:1.05em;">{cleaned_token}</span>'
-            if cleaned_token.endswith('.'):
-                tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Größerer Abstand nach einem Punkt
-                new_sentence = True
-            else:
-                new_sentence = False
+        tokens_html += f'<span style="background-color:{color}; padding:3px 8px; border-radius:4px; margin-right:6px; margin-bottom:6px; display:inline-block; font-size:1.05em;">{token}</span>'
+        if token.endswith('.'):
+            tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Größerer Abstand nach einem Punkt
+            new_sentence = True
+        else:
+            new_sentence = False
         previous_color = color
     if not new_sentence:
         tokens_html += '</div>'
@@ -273,5 +274,4 @@ if user_input:
     st.write(f"Anzahl der Tokens: {len(tokens)}")
 
     # Token-IDs anzeigen
-    token_ids = tokenizer.encode(user_input, add_special_tokens=False)
     st.write("Token-IDs:", token_ids)
