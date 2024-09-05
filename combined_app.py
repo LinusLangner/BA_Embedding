@@ -75,7 +75,7 @@ model = load_model()
 # Word groups
 tier_worte = ["dog", "cat", "lion", "elephant", "bird", "fish", "horse", "tiger", "whale", "bear"]
 obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "peanut", "mango"]
-farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "black", "white", "brown", "cyan"]
+farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "black", "white", "brown", "magenta"]
 emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
 
 # User input for custom words
