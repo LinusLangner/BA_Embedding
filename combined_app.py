@@ -117,7 +117,7 @@ else:
 
     # Add points for each word group
     colors = ['green', 'orange', 'blue', 'red', '#00FFFF']  # Cyan for user inputs
-    group_names = ["tier", "obst", "farb", "emotions", "Benutzer Eingaben"]
+    group_names = ["Tier", "Obst", "Farb", "Emotions", "Benutzer Eingaben"]
 
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
