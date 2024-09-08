@@ -170,7 +170,7 @@ else:
                     color=colors[i],
                 ),
                 textposition="top center",
-                name=f'{group_names[i]}bezogene Wörter' if i < 4 else group_names[i]
+                name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
             ))
 
     # Update 3D layout
