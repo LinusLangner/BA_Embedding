@@ -205,8 +205,8 @@ else:
 # Add larger space for clear separation
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
-# Abschnitt 2: Satz-Tokenizer
-st.title("📝 Satz-Tokenizer")
+# Abschnitt 2: Satz-Tokenizer und API-Antworten
+st.title("📝 Satz-Tokenizer und API-Antworten")
 
 # Definieren einer Reihe von subtilen, halbtransparenten Farben
 FARBEN = [
@@ -237,15 +237,11 @@ def tokens_from_string(string: str, encoding_name: str):
     tokens = [encoding.decode_single_token_bytes(token_id).decode('utf-8') for token_id in token_ids]
     return tokens, token_ids
 
-# Drei Spalten erstellen
-col1, col2, col3 = st.columns([2, 1, 1])
-
 # Platzhaltertext
 platzhalter_text = "Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen. Blumen wuchsen bald überall."
 
-# Benutzereingabe in der ersten Spalte
-with col1:
-    user_input = st.text_area("Geben Sie einen Satz oder eine Abfrage ein:", value=platzhalter_text, height=100)
+# Benutzereingabe
+user_input = st.text_area("Geben Sie einen Satz oder eine Abfrage ein:", value=platzhalter_text, height=100)
 
 if user_input:
     # Eingabe tokenisieren
@@ -280,35 +276,33 @@ if user_input:
     # Token-IDs anzeigen
     st.write("Token-IDs:", token_ids)
 
+    # Make sure your API key is set
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# Make sure your API key is set
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = OpenAI()
 
-client = OpenAI()
+    # Function to perform an API call with a given temperature
+    def call_openai_api(user_input, temp):
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich"},
+                {"role": "user", "content": user_input}
+            ],
+            temperature=temp
+        )
+        return response.choices[0].message.content
 
-# Function to perform an API call with a given temperature
-def call_openai_api(user_input, temp):
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich"},
-            {"role": "user", "content": user_input}
-        ],
-        temperature=temp
-    )
-    return response.choices[0].message.content
+    # Call the API with temperature 0 and 2
+    response_temp_0 = call_openai_api(user_input, 0)
+    response_temp_2 = call_openai_api(user_input, 2)
 
-# Call the API with temperature 0 and 2
-response_temp_0 = call_openai_api(user_input, 0)
-response_temp_2 = call_openai_api(user_input, 2)
+    # Display both responses side by side
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Antwort (Temperatur 0)")
+        st.write(response_temp_0)
 
-# Display both responses side by side
-col1, col2 = st.columns(2)
-with col1:
-    st.subheader("Antwort (Temperatur 0)")
-    st.write(response_temp_0)
-
-with col2:
-    st.subheader("Antwort (Temperatur 2)")
-    st.write(response_temp_2)
-
+    with col2:
+        st.subheader("Antwort (Temperatur 2)")
+        st.write(response_temp_2)
