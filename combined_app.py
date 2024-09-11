@@ -307,7 +307,7 @@ with col1:
     st.subheader("Antwort (Temperatur 0)")
     st.write(response_temp_0)
 
- with col2:
+with col2:
     st.subheader("Antwort (Temperatur 2)")
     st.write(response_temp_2)
 
