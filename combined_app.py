@@ -294,7 +294,7 @@ if api_input:
     def call_openai_api(api_input, temp):
         client = openai.OpenAI()
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "Du bist ein hilfreicher Assistent."}, 
                 {"role": "user", "content": api_input}
