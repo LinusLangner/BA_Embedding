@@ -305,7 +305,7 @@ if api_input:
 
     # Call the API with temperature 0 and 2
     response_temp_0 = call_openai_api(api_input, 0)
-    response_temp_07 = call_openai_api(api_input, 0.7)
+    response_temp_07 = call_openai_api(api_input, 1)
 
     # Display both responses side by side
     col1, col2 = st.columns(2)
