@@ -283,7 +283,7 @@ if user_input:
 
 
 # Section for User Input and API Calls
-st.title("🔍 API Vergleich (Temperatur 0 vs 2)")
+st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
 
 # User query input
 api_input = st.text_input("Geben Sie Ihre Abfrage ein:")
@@ -305,7 +305,7 @@ if api_input:
 
     # Call the API with temperature 0 and 2
     response_temp_0 = call_openai_api(api_input, 0)
-    response_temp_2 = call_openai_api(api_input, 2)
+    response_temp_07 = call_openai_api(api_input, 0.7)
 
     # Display both responses side by side
     col1, col2 = st.columns(2)
@@ -314,5 +314,5 @@ if api_input:
         st.write(response_temp_0)
 
     with col2:
-        st.subheader("Antwort (Temperatur 2)")
-        st.write(response_temp_2)
+        st.subheader("Antwort (Temperatur 07)")
+        st.write(response_temp_07)
