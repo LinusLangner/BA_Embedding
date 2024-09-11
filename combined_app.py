@@ -296,7 +296,7 @@ if api_input:
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich."}, 
+                {"role": "system", "content": "Du bist ein hilfreicher Assistent."}, 
                 {"role": "user", "content": api_input}
             ],
             temperature=temp
