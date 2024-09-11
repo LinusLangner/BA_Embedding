@@ -5,6 +5,7 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 import tiktoken
 import random
+import openai
 from openai import OpenAI
 
 hf_token = st.secrets["hf_token"]
