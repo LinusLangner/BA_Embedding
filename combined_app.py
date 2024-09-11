@@ -296,7 +296,7 @@ def call_openai_api(user_input, temp):
         ],
         temperature=temp
     )
-    return response['choices'][0]['message']['content']
+    return response.choices[0].message.content
 
 # Call the API with temperature 0 and 2
 response_temp_0 = call_openai_api(user_input, 0)
