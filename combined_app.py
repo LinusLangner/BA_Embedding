@@ -285,8 +285,15 @@ if user_input:
 # Section for User Input and API Calls
 st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
 
+# Define the placeholder text
+placeholder_text = "Nenne eine zufällige Zahl zwischen 0 und 100."
+
 # User query input with placeholder
-api_input = st.text_input("Geben Sie Ihre Abfrage ein:", placeholder="Nenne eine zufällige Zahl zwischen 0 und 100.")
+api_input = st.text_input("Geben Sie Ihre Abfrage ein:", placeholder=placeholder_text)
+
+# If no input is provided by the user, use the placeholder text as input
+if not api_input:
+    api_input = placeholder_text
 
 # Perform API calls if the input is provided
 if api_input:
@@ -303,9 +310,9 @@ if api_input:
         )
         return response.choices[0].message.content
 
-    # Call the API with temperature 0 and 2
+    # Call the API with temperature 0 and 0.7
     response_temp_0 = call_openai_api(api_input, 0)
-    response_temp_07 = call_openai_api(api_input, 1)
+    response_temp_07 = call_openai_api(api_input, 0.7)
 
     # Display both responses side by side with a border and markdown
     col1, col2 = st.columns(2)
