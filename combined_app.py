@@ -5,13 +5,19 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 import tiktoken
 import random
-
-hf_token = st.secrets["hf_token"]
+from openai import OpenAI
 
 # Page settings
-st.set_page_config(page_title="Wort-Embeddings & Satz-Tokenizer", layout="wide")
+st.set_page_config(page_title="Wort-Embeddings, Satz-Tokenizer & OpenAI API", layout="wide")
 
-# General style guidelines for consistency
+# Secrets
+hf_token = st.secrets["hf_token"]
+openai_api_key = st.secrets["openai_api_key"]
+
+# OpenAI Client initialisieren
+client = OpenAI(api_key=openai_api_key)
+
+# General style guidelines
 st.markdown("""
 <style>
     .stApp {
@@ -277,3 +283,39 @@ if user_input:
 
     # Token-IDs anzeigen
     st.write("Token-IDs:", token_ids)
+
+# Add larger space for clear separation
+st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
+
+# Abschnitt 3: OpenAI API Vergleich
+st.title("🤖 OpenAI API Vergleich")
+
+# Eingabefeld für User Query
+user_query = st.text_area("Geben Sie Ihre Anfrage ein:", height=100)
+
+if st.button("API-Antworten vergleichen"):
+    if user_query:
+        # API-Call mit Temperatur 0
+        response_temp_0 = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich."},
+                {"role": "user", "content": user_query}
+            ],
+            temperature=0
+        )
+        answer_temp_0 = response_temp_0.choices[0].message.content
+
+        # API-Call mit Temperatur 2
+        response_temp_2 = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich."},
+                {"role": "user", "content": user_query}
+            ],
+            temperature=2
+        )
+        answer_temp_2 = response_temp_2.choices[0].message.content
+
+        # Antworten anzeigen
+        st.subheader
