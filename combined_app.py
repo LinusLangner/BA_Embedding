@@ -285,8 +285,8 @@ if user_input:
 # Section for User Input and API Calls
 st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
 
-# User query input
-api_input = st.text_input("Geben Sie Ihre Abfrage ein:")
+# User query input with placeholder
+api_input = st.text_input("Geben Sie Ihre Abfrage ein:", placeholder="Nenne eine zufällige Zahl zwischen 0 und 100.")
 
 # Perform API calls if the input is provided
 if api_input:
@@ -307,12 +307,19 @@ if api_input:
     response_temp_0 = call_openai_api(api_input, 0)
     response_temp_07 = call_openai_api(api_input, 1)
 
-    # Display both responses side by side
+    # Display both responses side by side with a border and markdown
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Antwort (Temperatur 0)")
-        st.write(response_temp_0)
+        st.markdown(
+            f"<div style='border: 2px solid #4CAF50; padding: 10px; border-radius: 10px;'>{response_temp_0}</div>", 
+            unsafe_allow_html=True
+        )
 
     with col2:
-        st.subheader("Antwort (Temperatur 07)")
-        st.write(response_temp_07)
+        st.subheader("Antwort (Temperatur 0.7)")
+        st.markdown(
+            f"<div style='border: 2px solid #FF9800; padding: 10px; border-radius: 10px;'>{response_temp_07}</div>", 
+            unsafe_allow_html=True
+        )
+
