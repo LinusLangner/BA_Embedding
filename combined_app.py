@@ -289,7 +289,7 @@ st.title("🔍 API Vergleich (Temperatur 0 vs 2)")
 api_input = st.text_input("Geben Sie Ihre Abfrage ein:")
 
 # Perform API calls if the input is provided
-if user_input:
+if api_input:
     # Function to perform an API call
     def call_openai_api(api_input, temp):
         client = openai.OpenAI()
@@ -297,7 +297,7 @@ if user_input:
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich."}, 
-                {"role": "user", "content": user_input}
+                {"role": "user", "content": api_input}
             ],
             temperature=temp
         )
