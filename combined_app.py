@@ -5,6 +5,7 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 import tiktoken
 import random
+import openai
 
 hf_token = st.secrets["hf_token"]
 
@@ -277,3 +278,42 @@ if user_input:
 
     # Token-IDs anzeigen
     st.write("Token-IDs:", token_ids)
+
+
+# Load the OpenAI API key from Streamlit secrets
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+# Section for User Input and API Calls
+st.title("🔍 API Vergleich (Temperatur 0 vs 2)")
+
+# User query input
+user_input = st.text_input("Geben Sie Ihre Abfrage ein:")
+
+# Perform API calls if the input is provided
+if user_input:
+    # Function to perform an API call
+    def call_openai_api(user_input, temp):
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich."}, 
+                {"role": "user", "content": user_input}
+            ],
+            temperature=temp
+        )
+        return response.choices[0].message['content']
+
+    # Call the API with temperature 0 and 2
+    response_temp_0 = call_openai_api(user_input, 0)
+    response_temp_2 = call_openai_api(user_input, 2)
+
+    # Display both responses side by side
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Antwort (Temperatur 0)")
+        st.write(response_temp_0)
+
+    with col2:
+        st.subheader("Antwort (Temperatur 2)")
+        st.write(response_temp_2)
+
