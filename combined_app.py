@@ -5,8 +5,6 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 import tiktoken
 import random
-import openai
-from openai import OpenAI
 
 hf_token = st.secrets["hf_token"]
 
@@ -74,19 +72,19 @@ def load_model():
 # Load model
 model = load_model()
 
-# User input for embedding models
-st.subheader("Fügen Sie Ihre eigenen Wörter für Embeddings hinzu")
-embedding_input = st.text_input("Geben Sie Wörter ein, getrennt durch Kommas:", "")
-embedding_words = [word.strip().lower() for word in embedding_input.split(',') if word.strip()]
-
 # Word groups
 tier_worte = ["dog", "cat", "lion", "elephant", "bird", "fish", "horse", "tiger", "whale", "bear"]
 obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "peanut", "mango"]
 farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "black", "white", "brown", "beige"]
 emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
 
+# User input for custom words
+st.subheader("Fügen Sie Ihre eigenen Wörter hinzu")
+user_words = st.text_input("Geben Sie Wörter ein, getrennt durch Kommas:", "")
+user_words = [word.strip().lower() for word in user_words.split(',') if word.strip()]
+
 # Combine all words
-alle_worte = tier_worte + obst_worte + farben_worte + embedding_words
+alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte + user_words
 
 # Get embeddings for all words, only if the word is in the model
 embeddings = []
@@ -121,9 +119,10 @@ else:
     colors = ['green', 'orange', 'blue', 'red', '#00FFFF']  # Cyan for user inputs
     group_names = ["Tier", "Obst", "Farb", "Emotions", "Benutzer Eingaben"]
 
-    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, embedding_words]):
+    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
         if valid_indices:
+            # Benutzer Eingaben ohne "-bezogene Wörter"
             group_name = group_names[i] if i == 4 else f'{group_names[i]}-bezogene Wörter'
             fig_2d.add_trace(go.Scatter(
                 x=reduzierte_embeddings_2d[valid_indices, 0],
@@ -139,7 +138,7 @@ else:
                 name=group_name
             ))
 
-    # Update 2D layout
+    # Update 2D layout with initial zoom out
     x_min, x_max = reduzierte_embeddings_2d[:, 0].min(), reduzierte_embeddings_2d[:, 0].max()
     y_min, y_max = reduzierte_embeddings_2d[:, 1].min(), reduzierte_embeddings_2d[:, 1].max()
 
@@ -157,7 +156,7 @@ else:
     fig_3d = go.Figure()
 
     # Add points for each word group
-    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, embedding_words]):
+    for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
         if valid_indices:
             fig_3d.add_trace(go.Scatter3d(
@@ -186,10 +185,13 @@ else:
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
-    # Display charts
+    # Layout and display
     st.subheader("2D und 3D Wort-Embeddings Visualisierungen")
 
+    # Create two columns
     col1, col2 = st.columns(2)
+
+    # Display charts side by side
     with col1:
         st.write("#### 2D Visualisierung")
         st.plotly_chart(fig_2d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
@@ -198,18 +200,59 @@ else:
         st.write("#### 3D Visualisierung")
         st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
 
-# Section 2: Tokenizer Input
-st.title("📝 Satz-Tokenizer und API-Antworten")
+# Add larger space for clear separation
+st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
-# Tokenizer user input
-tokenizer_input = st.text_area("Geben Sie einen Satz für die Tokenisierung ein:", value="Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen.", height=100)
+# Abschnitt 2: Satz-Tokenizer
+st.title("📝 Satz-Tokenizer")
 
-if tokenizer_input:
-    # Tokenize the input
-    tokens, token_ids = tokens_from_string(tokenizer_input, "cl100k_base")
+# Definieren einer Reihe von subtilen, halbtransparenten Farben
+FARBEN = [
+    "rgba(255, 99, 71, 0.3)",   # Tomate
+    "rgba(255, 165, 0, 0.3)",   # Orange
+    "rgba(255, 215, 0, 0.3)",   # Gold
+    "rgba(154, 205, 50, 0.3)",  # Gelbgrün
+    "rgba(0, 255, 127, 0.3)",   # Frühlinggrün
+    "rgba(100, 149, 237, 0.3)", # Kornblumenblau
+    "rgba(138, 43, 226, 0.3)",  # Blauviolett
+    "rgba(255, 192, 203, 0.3)", # Rosa
+]
 
-    # Tokenized result display
+# Funktion, um eine zufällige Farbe auszuwählen, die keine aufeinanderfolgenden Wiederholungen enthält
+def get_random_color(previous_color=None):
+    available_colors = [c for c in FARBEN if c != previous_color]
+    return random.choice(available_colors)
+
+# Funktion zur Tokenisierung unter Verwendung von tiktoken
+@st.cache_resource
+def load_tokenizer(encoding_name="cl100k_base"):
+    return tiktoken.get_encoding(encoding_name)
+
+def tokens_from_string(string: str, encoding_name: str):
+    """Returns the tokens in a text string."""
+    encoding = load_tokenizer(encoding_name)
+    token_ids = encoding.encode(string)
+    tokens = [encoding.decode_single_token_bytes(token_id).decode('utf-8') for token_id in token_ids]
+    return tokens, token_ids
+
+# Drei Spalten erstellen
+col1, col2, col3 = st.columns([2, 1, 1])
+
+# Platzhaltertext
+platzhalter_text = "Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen. Blumen wuchsen bald überall."
+
+# Benutzereingabe in der ersten Spalte
+with col1:
+    user_input = st.text_area("Geben Sie einen Satz oder eine Abfrage ein:", value=platzhalter_text, height=100)
+
+if user_input:
+    # Eingabe tokenisieren
+    tokens, token_ids = tokens_from_string(user_input, "cl100k_base")
+
+    # Tokenisiertes Ergebnis anzeigen
     st.subheader("Tokenisiertes Ergebnis:")
+
+    # Container für Tokens mit Zeilenumbrüchen erstellen
     tokens_html = '<div style="line-height: 1.6; text-align: left; word-break: break-word;">'
     previous_color = None
     new_sentence = True
@@ -217,7 +260,7 @@ if tokenizer_input:
         color = get_random_color(previous_color)
         tokens_html += f'<span style="background-color:{color}; padding:3px 8px; border-radius:4px; margin-right:6px; margin-bottom:6px; display:inline-block; font-size:1.05em;">{token}</span>'
         if token.endswith('.'):
-            tokens_html += '</div><div style="margin-bottom: 18px;"></div>'
+            tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Größerer Abstand nach einem Punkt
             new_sentence = True
         else:
             new_sentence = False
@@ -228,45 +271,9 @@ if tokenizer_input:
 
     st.markdown(tokens_html, unsafe_allow_html=True)
 
-    # Token info
+    # Token-Informationen anzeigen
     st.subheader("Token-Informationen:")
     st.write(f"Anzahl der Tokens: {len(tokens)}")
+
+    # Token-IDs anzeigen
     st.write("Token-IDs:", token_ids)
-
-# API Calls Section
-st.subheader("API-Antworten")
-
-# Separate user input for API calls
-api_input = st.text_area("Geben Sie einen Satz oder eine Abfrage für die API-Antworten ein:", value="Was ist die Hauptstadt von Frankreich?", height=100)
-
-if api_input:
-    # Ensure API key is set
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
-
-    client = OpenAI()
-
-    # Function to perform an API call with a given temperature
-    def call_openai_api(user_input, temp):
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich"},
-                {"role": "user", "content": user_input}
-            ],
-            temperature=temp
-        )
-        return response.choices[0].message.content
-
-    # Call the API with temperature 0 and 2
-    response_temp_0 = call_openai_api(api_input, 0)
-    response_temp_2 = call_openai_api(api_input, 2)
-
-    # Display both responses side by side
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Antwort (Temperatur 0)")
-        st.write(response_temp_0)
-
-    with col2:
-        st.subheader("Antwort (Temperatur 2)")
-        st.write(response_temp_2)
