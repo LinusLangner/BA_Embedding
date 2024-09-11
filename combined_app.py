@@ -283,23 +283,31 @@ if user_input:
 # Make sure your API key is set
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
+client = OpenAI()
+
 # Function to perform an API call with a given temperature
 def call_openai_api(user_input, temp):
-    response = openai.ChatCompletion.create(
-        model="gpt-4",  # or "gpt-3.5-turbo" depending on your use case
+    response = client.chat.completions.create(
+        model="gpt-4o",
         messages=[
-            {"role": "system", "content": "Du bist ein hilfreicher Assistent."},
+            {"role": "system", "content": "Du bist ein hilfreicher Assistent. Antworte knapp und höflich"},
             {"role": "user", "content": user_input}
         ],
         temperature=temp
     )
     return response['choices'][0]['message']['content']
 
-# Test example
-response_temp_0 = call_openai_api("Bitte gib mir eine zufällige Zahl zwischen 1 und 100.", 0)
-response_temp_2 = call_openai_api("Bitte gib mir eine zufällige Zahl zwischen 1 und 100.", 2)
+# Call the API with temperature 0 and 2
+response_temp_0 = call_openai_api(user_input, 0)
+response_temp_2 = call_openai_api(user_input, 2)
 
-# Print or display the outputs
-print(f"Antwort bei Temperatur 0: {response_temp_0}")
-print(f"Antwort bei Temperatur 2: {response_temp_2}")
+# Display both responses side by side
+col1, col2 = st.columns(2)
+with col1:
+    st.subheader("Antwort (Temperatur 0)")
+    st.write(response_temp_0)
+
+ with col2:
+    st.subheader("Antwort (Temperatur 2)")
+    st.write(response_temp_2)
 
