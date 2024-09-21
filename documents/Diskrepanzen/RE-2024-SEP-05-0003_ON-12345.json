@@ -1,0 +1,70 @@
+{
+    "article_number_discrepancies": [
+        {
+            "invoice_article_number": "1003",
+            "order_article_numbers": [
+                "1001",
+                "1002",
+                "1006",
+                "1000"
+            ],
+            "note": "Artikelnummer in der Rechnung stimmt nicht \n                mit einer Artikelnummer in der Bestellung \u00fcberein"
+        }
+    ],
+    "quantity_discrepancies": [
+        {
+            "article_number": 1,
+            "order_amount": 20,
+            "invoice_amount": 2,
+            "difference": 18
+        },
+        {
+            "article_number": 2,
+            "order_amount": 500,
+            "invoice_amount": 50,
+            "difference": 450
+        },
+        {
+            "article_number": 4,
+            "order_amount": 10,
+            "invoice_amount": null,
+            "difference": "Nicht angegeben"
+        }
+    ],
+    "price_discrepancies": [
+        {
+            "article_number": 4,
+            "order_price": 100.0,
+            "invoice_price": null,
+            "difference": "Nicht angegeben"
+        }
+    ],
+    "total_discrepancies": [
+        {
+            "order_total": 11150.0,
+            "invoice_total": 1250.0,
+            "difference": 9900.0
+        }
+    ],
+    "description_discrepancies": [
+        {
+            "article_number": 3,
+            "order_description": "Hemdknopf, Typ C",
+            "invoice_description": "Rei\u00dfverschl\u00fcsse, 25cm",
+            "note": "Die Beschreibungen sind unterschiedlich"
+        },
+        {
+            "article_number": 4,
+            "order_description": "asdasd",
+            "invoice_description": null,
+            "note": "Die Beschreibungen sind unterschiedlich"
+        }
+    ],
+    "date_discrepancies": [
+        {
+            "order_date": 20240815,
+            "invoice_date": 20240905,
+            "difference_in_days": 21
+        }
+    ]
+}

@@ -1,0 +1,53 @@
+{
+    "article_number_discrepancies": [
+        {
+            "invoice_article_number": "1001b",
+            "order_article_numbers": [
+                "1001a",
+                "1002f",
+                "1006"
+            ],
+            "note": "Artikelnummer in der Rechnung stimmt nicht \n                mit einer Artikelnummer in der Bestellung \u00fcberein"
+        },
+        {
+            "invoice_article_number": "1002",
+            "order_article_numbers": [
+                "1001a",
+                "1002f",
+                "1006"
+            ],
+            "note": "Artikelnummer in der Rechnung stimmt nicht \n                mit einer Artikelnummer in der Bestellung \u00fcberein"
+        }
+    ],
+    "quantity_discrepancies": [],
+    "price_discrepancies": [
+        {
+            "article_number": 1,
+            "order_price": 150.0,
+            "invoice_price": 300.0,
+            "difference": -150.0
+        }
+    ],
+    "total_discrepancies": [
+        {
+            "order_total": 2300.0,
+            "invoice_total": 4150.0,
+            "difference": -1850.0
+        }
+    ],
+    "description_discrepancies": [
+        {
+            "article_number": 1,
+            "order_description": "Baumwollstoff, Klasse 3 100m Rolle",
+            "invoice_description": "Baumwollstoff, Klasse 2 100m Rolle",
+            "note": "Die Beschreibungen sind unterschiedlich"
+        }
+    ],
+    "date_discrepancies": [
+        {
+            "order_date": 20240720,
+            "invoice_date": 20240727,
+            "difference_in_days": 7
+        }
+    ]
+}

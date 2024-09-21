@@ -1,0 +1,46 @@
+{
+    "article_number_discrepancies": [],
+    "quantity_discrepancies": [
+        {
+            "article_number": 1,
+            "order_amount": 10,
+            "invoice_amount": 8,
+            "difference": 2
+        },
+        {
+            "article_number": 2,
+            "order_amount": 200,
+            "invoice_amount": 150,
+            "difference": 50
+        },
+        {
+            "article_number": 3,
+            "order_amount": 150,
+            "invoice_amount": 300,
+            "difference": -150
+        }
+    ],
+    "price_discrepancies": [
+        {
+            "article_number": 1,
+            "order_price": 500.0,
+            "invoice_price": 400.0,
+            "difference": 100.0
+        }
+    ],
+    "total_discrepancies": [
+        {
+            "order_total": 5300.0,
+            "invoice_total": 3950.0,
+            "difference": 1350.0
+        }
+    ],
+    "description_discrepancies": [],
+    "date_discrepancies": [
+        {
+            "order_date": 20240801,
+            "invoice_date": 20240820,
+            "difference_in_days": 19
+        }
+    ]
+}

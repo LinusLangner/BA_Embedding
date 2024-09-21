@@ -1,0 +1,27 @@
+{
+    "article_number_discrepancies": [],
+    "quantity_discrepancies": [
+        {
+            "article_number": 1,
+            "order_amount": 10,
+            "invoice_amount": 8,
+            "difference": 2
+        }
+    ],
+    "price_discrepancies": [],
+    "total_discrepancies": [
+        {
+            "order_total": 2940.0,
+            "invoice_total": 2840.0,
+            "difference": 100.0
+        }
+    ],
+    "description_discrepancies": [],
+    "date_discrepancies": [
+        {
+            "order_date": 20240802,
+            "invoice_date": 20240816,
+            "difference_in_days": 14
+        }
+    ]
+}
