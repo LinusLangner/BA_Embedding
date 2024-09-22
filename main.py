@@ -6,7 +6,7 @@ from extract_structured_data import process_order_and_invoice
 from compare_data import comparer
 from structure_user_outputs import generate_informative_text, print_user_formatted_data
 from token_tracker import calculate_total_cost  # Import the token cost calculator
-from rag_integration import process_rag_query_from_json, calculate_rag_total_cost  # Import RAG processes
+from .rag_integration import process_rag_query_from_json, calculate_rag_total_cost  # Import RAG processes
 
 def process_invoice(invoice_pdf_filename):
     start_time = time.time()  # Capture the start time
