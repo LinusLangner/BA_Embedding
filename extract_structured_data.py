@@ -1,5 +1,5 @@
 import os
-import PyMuPDF
+import fitz #PyMuPDF
 from pydantic import BaseModel
 from openai import OpenAI
 from token_tracker import track_token_usage
@@ -30,7 +30,7 @@ def process_order_and_invoice(invoice_pdf_filename):
     # Hilfsfunktion zum Extrahieren von Text aus einem PDF-Dokument
     def extract_text_from_pdf(pdf_path):
         print(f"\nExtrahiere Text aus PDF: {pdf_path}\n")
-        pdf_document = pymupdf.open(pdf_path)
+        pdf_document = fitz.open(pdf_path)
         text = ""
         for page in pdf_document:
             text += page.get_text("text")
