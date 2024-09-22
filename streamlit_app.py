@@ -333,18 +333,18 @@ if api_input:
 
 
 import streamlit as st
-import subprocess
+from main import process_invoice  # Import the function from main.py
 
 # Section for Invoice Processing
 st.title("🔍 Lieferantenrechnungen Vergleich")
 
 st.write("Wählen Sie eine der folgenden Rechnungen aus, um den Vergleichsprozess zu starten:")
 
-# Create three buttons for the invoice PDFs
+# Create buttons for the invoice PDFs
 invoice_files = {
-    "INV-2024-11335.pdf": "INV-2024-11335.pdf",
-    "RE-2024-JUL-27-0001.pdf": "RE-2024-JUL-27-0001.pdf",
-    "RE-2024-SEP-05-0003.pdf": "RE-2024-SEP-05-0003.pdf"
+    "INV-2024-11335.pdf": "documents/Lieferantenrechnungen/INV-2024-11335.pdf",
+    "RE-2024-JUL-27-0001.pdf": "documents/Lieferantenrechnungen/RE-2024-JUL-27-0001.pdf",
+    "RE-2024-SEP-05-0003.pdf": "documents/Lieferantenrechnungen/RE-2024-SEP-05-0003.pdf"
 }
 
 # Display buttons and capture the selected invoice
@@ -353,21 +353,23 @@ for label, filename in invoice_files.items():
     if st.button(label):
         selected_invoice = filename
 
-# If an invoice is selected, run the main.py script with the invoice filename
+# If an invoice is selected, process it using the imported function
 if selected_invoice:
     st.subheader(f"Verarbeitung der Rechnung: {selected_invoice}")
 
-    command = f"python3 main.py {selected_invoice}"
-    
-    # Execute the main.py script and capture the output
+    # Call the function from main.py
     with st.spinner(f"Verarbeite {selected_invoice}..."):
-        os.system(command)
-    
-    # Display the output from the script in a markdown text field
-    st.markdown("### Ausgaben des Prozesses:")
-    st.markdown(f"```\n{process_output.stdout}\n```")
-    
-    # Check if there were any errors during execution
-    if process_output.stderr:
-        st.error(f"Fehler während der Verarbeitung:\n{process_output.stderr}")
+        results = process_invoice(selected_invoice)
 
+    # Display the processed output
+    st.markdown("### Ausgaben des Prozesses:")
+    st.markdown(f"```\n{results['informative_text']}\n```")
+
+    # Display the token usage cost
+    st.markdown(f"**Gesamtkosten vor RAG:** ${results['total_cost_before_rag']}")
+    st.markdown(f"**Antwort des LLMs (RAG):**\n{results['rag_response']}")
+    st.markdown(f"**RAG Kosten:** ${results['rag_cost']}")
+    st.markdown(f"**Gesamtkosten inklusive RAG:** ${results['total_cost_after_rag']}")
+
+    # Display the total time taken
+    st.markdown(f"**Verarbeitungszeit:** {results['total_time_taken']:.2f} Sekunden")
