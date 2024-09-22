@@ -18,7 +18,7 @@ model = "gpt-4o-2024-08-06"
 
 # Initialisiere Embeddings und Vektor-Datenbank für RAG
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-vectorstore = Chroma(persist_directory="vectordb/vertrag", embedding_function=embeddings)
+vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
 
 def retrieve_context(question, k=1):
     """Rufe relevanten Kontext aus dem Chroma-Vektor-Speicher basierend auf der Frage ab."""
