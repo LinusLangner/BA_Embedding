@@ -9,6 +9,8 @@ from typing import List, Dict, Any
 from datetime import datetime
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
+# from streamlit_chromadb_connection import ChromaDBConnection
+
 
 # OpenAI-Client einrichten
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
@@ -19,6 +21,16 @@ model_mini = "gpt-4o-mini"
 
 # Embeddings und Vektorspeicher einrichten
 embeddings = OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"], model="text-embedding-3-large")
+
+# Vektordatenbank initialisieren
+config = {
+    "client": "PersistentClient",
+    "path": "./vectordb/vertrag",
+}
+
+# Verbindung zur Vektordatenbank herstellen
+# conn = st.connection("chromadb", type=ChromaDBConnection, **config)
+
 vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
 
 # DocumentExtraction-Klasse definieren
