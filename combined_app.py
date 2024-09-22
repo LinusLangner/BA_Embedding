@@ -5,12 +5,11 @@ from sklearn.decomposition import PCA
 import plotly.graph_objs as go
 import tiktoken
 import random
-import subprocess
-import sys
 import openai
 
 hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
+
 
 # Page settings
 st.set_page_config(page_title="Wort-Embeddings & Satz-Tokenizer", layout="wide")
@@ -126,6 +125,7 @@ else:
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
         if valid_indices:
+            # Benutzer Eingaben ohne "-bezogene Wörter"
             group_name = group_names[i] if i == 4 else f'{group_names[i]}-bezogene Wörter'
             fig_2d.add_trace(go.Scatter(
                 x=reduzierte_embeddings_2d[valid_indices, 0],
@@ -142,13 +142,16 @@ else:
             ))
 
     # Update 2D layout with initial zoom out
+    x_min, x_max = reduzierte_embeddings_2d[:, 0].min(), reduzierte_embeddings_2d[:, 0].max()
+    y_min, y_max = reduzierte_embeddings_2d[:, 1].min(), reduzierte_embeddings_2d[:, 1].max()
+
     fig_2d.update_layout(
         xaxis_title='PCA 1',
         yaxis_title='PCA 2',
         height=600,
         margin=dict(l=20, r=20, t=30, b=20),
-        xaxis=dict(range=[reduzierte_embeddings_2d[:, 0].min() - 1, reduzierte_embeddings_2d[:, 0].max() + 1]),
-        yaxis=dict(range=[reduzierte_embeddings_2d[:, 1].min() - 1, reduzierte_embeddings_2d[:, 1].max() + 1]),
+        xaxis=dict(range=[x_min - 1, x_max + 1]),
+        yaxis=dict(range=[y_min - 1, y_max + 1]),
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
@@ -203,10 +206,10 @@ else:
 # Add larger space for clear separation
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
-# Section 2: Sentence Tokenizer
+# Abschnitt 2: Satz-Tokenizer
 st.title("📝 Satz-Tokenizer")
 
-# Define subtle, semi-transparent colors
+# Definieren einer Reihe von subtilen, halbtransparenten Farben
 FARBEN = [
     "rgba(255, 99, 71, 0.3)",   # Tomate
     "rgba(255, 165, 0, 0.3)",   # Orange
@@ -218,12 +221,12 @@ FARBEN = [
     "rgba(255, 192, 203, 0.3)", # Rosa
 ]
 
-# Function to get random color
+# Funktion, um eine zufällige Farbe auszuwählen, die keine aufeinanderfolgenden Wiederholungen enthält
 def get_random_color(previous_color=None):
     available_colors = [c for c in FARBEN if c != previous_color]
     return random.choice(available_colors)
 
-# Load tokenizer
+# Funktion zur Tokenisierung unter Verwendung von tiktoken
 @st.cache_resource
 def load_tokenizer(encoding_name="cl100k_base"):
     return tiktoken.get_encoding(encoding_name)
@@ -235,24 +238,24 @@ def tokens_from_string(string: str, encoding_name: str):
     tokens = [encoding.decode_single_token_bytes(token_id).decode('utf-8') for token_id in token_ids]
     return tokens, token_ids
 
-# Three columns
+# Drei Spalten erstellen
 col1, col2, col3 = st.columns([2, 1, 1])
 
-# Placeholder text
+# Platzhaltertext
 platzhalter_text = "Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen. Blumen wuchsen bald überall."
 
-# User input in the first column
+# Benutzereingabe in der ersten Spalte
 with col1:
     user_input = st.text_area("Geben Sie einen Satz oder eine Abfrage ein:", value=platzhalter_text, height=100)
 
 if user_input:
-    # Tokenize input
+    # Eingabe tokenisieren
     tokens, token_ids = tokens_from_string(user_input, "cl100k_base")
 
-    # Display tokenized result
+    # Tokenisiertes Ergebnis anzeigen
     st.subheader("Tokenisiertes Ergebnis:")
 
-    # Create container for tokens with line breaks
+    # Container für Tokens mit Zeilenumbrüchen erstellen
     tokens_html = '<div style="line-height: 1.6; text-align: left; word-break: break-word;">'
     previous_color = None
     new_sentence = True
@@ -260,7 +263,7 @@ if user_input:
         color = get_random_color(previous_color)
         tokens_html += f'<span style="background-color:{color}; padding:3px 8px; border-radius:4px; margin-right:6px; margin-bottom:6px; display:inline-block; font-size:1.05em;">{token}</span>'
         if token.endswith('.'):
-            tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Larger gap after a period
+            tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Größerer Abstand nach einem Punkt
             new_sentence = True
         else:
             new_sentence = False
@@ -271,46 +274,18 @@ if user_input:
 
     st.markdown(tokens_html, unsafe_allow_html=True)
 
-    # Display token information
+    # Token-Informationen anzeigen
     st.subheader("Token-Informationen:")
     st.write(f"Anzahl der Tokens: {len(tokens)}")
 
-    # Display token IDs
+    # Token-IDs anzeigen
     st.write("Token-IDs:", token_ids)
 
 
-# Section 3: Supplier Invoice Processing
-st.title("📄 Verarbeiten von Lieferantenrechnungen")
-
-# PDF files for buttons
-pdf_files = {
-    "INV-2024-11335.pdf": "documents/Lieferantenrechnungen/INV-2024-11335.pdf",
-    "RE-2024-JUL-27-0001.pdf": "documents/Lieferantenrechnungen/RE-2024-JUL-27-0001.pdf",
-    "RE-2024-SEP-05-0003.pdf": "documents/Lieferantenrechnungen/RE-2024-SEP-05-0003.pdf"
-}
-
-# Function to run main.py with the selected PDF
-def run_main_process(pdf_file):
-    command = [sys.executable, 'main.py', pdf_file]  # Run main.py script
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, error = process.communicate()
-    return output.decode("utf-8"), error.decode("utf-8")
-
-# Button interactions
-for pdf_name, pdf_path in pdf_files.items():
-    if st.button(f"Verarbeite {pdf_name}"):
-        st.markdown(f"### Verarbeiten von `{pdf_name}` gestartet...")
-        output, error = run_main_process(pdf_name)
-        if output:
-            st.markdown(f"**Ergebnis:**\n\n```{output}```")
-        if error:
-            st.markdown(f"**Fehler:**\n\n```{error}```")
-
-
-# Section 4: API Comparison
+# Section for User Input and API Calls
 st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
 
-# Placeholder text
+# Define the placeholder text
 placeholder_text = "Nenne eine zufällige Zahl zwischen 0 und 100."
 
 # User query input with placeholder
@@ -354,3 +329,4 @@ if api_input:
             f"<div style='border: 2px solid #FF9800; padding: 10px; border-radius: 10px;'>{response_temp_07}</div>", 
             unsafe_allow_html=True
         )
+
