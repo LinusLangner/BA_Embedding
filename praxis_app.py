@@ -9,21 +9,16 @@ from typing import List, Dict, Any
 from datetime import datetime
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
-from dotenv import load_dotenv
-
-# Umgebungsvariablen laden
-load_dotenv()
 
 # OpenAI-Client einrichten
-client = OpenAI()
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Modelle definieren
 model = "gpt-4o-2024-08-06"
 model_mini = "gpt-4o-mini"
 
 # Embeddings und Vektorspeicher einrichten
-embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+embeddings = OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"], model="text-embedding-3-large")
 vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
 
 # DocumentExtraction-Klasse definieren
