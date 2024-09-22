@@ -1,16 +1,5 @@
 {
-    "article_number_discrepancies": [
-        {
-            "invoice_article_number": "1003",
-            "order_article_numbers": [
-                "1001",
-                "1002",
-                "1006",
-                "1000"
-            ],
-            "note": "Artikelnummer in der Rechnung stimmt nicht \n                mit einer Artikelnummer in der Bestellung \u00fcberein"
-        }
-    ],
+    "article_number_discrepancies": [],
     "quantity_discrepancies": [
         {
             "article_number": 1,
@@ -23,20 +12,26 @@
             "order_amount": 500,
             "invoice_amount": 50,
             "difference": 450
-        },
-        {
-            "article_number": 4,
-            "order_amount": 10,
-            "invoice_amount": null,
-            "difference": "Nicht angegeben"
         }
     ],
     "price_discrepancies": [
         {
-            "article_number": 4,
-            "order_price": 100.0,
-            "invoice_price": null,
-            "difference": "Nicht angegeben"
+            "article_number": 1,
+            "order_price": 500.0,
+            "invoice_price": 1000.0,
+            "difference": -500.0
+        },
+        {
+            "article_number": 2,
+            "order_price": 2.0,
+            "invoice_price": 100.0,
+            "difference": -98.0
+        },
+        {
+            "article_number": 3,
+            "order_price": 1.5,
+            "invoice_price": 150.0,
+            "difference": -148.5
         }
     ],
     "total_discrepancies": [
@@ -46,20 +41,7 @@
             "difference": 9900.0
         }
     ],
-    "description_discrepancies": [
-        {
-            "article_number": 3,
-            "order_description": "Hemdknopf, Typ C",
-            "invoice_description": "Rei\u00dfverschl\u00fcsse, 25cm",
-            "note": "Die Beschreibungen sind unterschiedlich"
-        },
-        {
-            "article_number": 4,
-            "order_description": "asdasd",
-            "invoice_description": null,
-            "note": "Die Beschreibungen sind unterschiedlich"
-        }
-    ],
+    "description_discrepancies": [],
     "date_discrepancies": [
         {
             "order_date": 20240815,

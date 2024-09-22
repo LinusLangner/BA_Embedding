@@ -75,7 +75,7 @@ def process_rag_query_from_json(json_file_path):
 
     # Erstelle den Fragenstring mit der extrahierten 'difference_in_days'
 
-    question = f"""Die Lieferzeit der Rechnung betrug: {difference_in_days} Tage. 
+    question = f"""Die Lieferzeit der Ware betrug: {difference_in_days} Tage. 
                     Stimmt das mit der vertraglichen Vereinbarung überein?"""
 
     print(f"Frage, die an RAG gesendet wird: {question}")
