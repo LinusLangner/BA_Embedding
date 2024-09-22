@@ -7,6 +7,7 @@ import tiktoken
 import random
 import subprocess
 import sys
+import openai
 
 hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
