@@ -6,6 +6,7 @@ import plotly.graph_objs as go
 import tiktoken
 import random
 import openai
+import os
 
 hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -355,14 +356,12 @@ for label, filename in invoice_files.items():
 # If an invoice is selected, run the main.py script with the invoice filename
 if selected_invoice:
     st.subheader(f"Verarbeitung der Rechnung: {selected_invoice}")
+
+    command = f"python3 main.py {selected_invoice}"
     
     # Execute the main.py script and capture the output
     with st.spinner(f"Verarbeite {selected_invoice}..."):
-        process_output = subprocess.run(
-            ["python3", "main.py", selected_invoice], 
-            capture_output=True, 
-            text=True
-        )
+        os.system(command)
     
     # Display the output from the script in a markdown text field
     st.markdown("### Ausgaben des Prozesses:")
