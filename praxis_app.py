@@ -7,31 +7,36 @@ from pydantic import BaseModel
 from openai import OpenAI
 from typing import List, Dict, Any
 from datetime import datetime
-from langchain_openai import OpenAIEmbeddings
-from langchain_chroma import Chroma
-# from streamlit_chromadb_connection import ChromaDBConnection
+import chromadb
+import chromadb.utils.embedding_functions as embedding_functions
 
+# Laden des OpenAI API-Schlüssels aus Streamlit secrets
+openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 # OpenAI-Client einrichten
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+client = OpenAI(api_key=openai_api_key)
 
 # Modelle definieren
 model = "gpt-4o-2024-08-06"
 model_mini = "gpt-4o-mini"
 
-# Embeddings und Vektorspeicher einrichten
-embeddings = OpenAIEmbeddings(api_key=st.secrets["OPENAI_API_KEY"], model="text-embedding-3-large")
+# Einrichten des Chroma HTTP-Clients
+chroma_client = chromadb.HttpClient(
+    host='16.171.0.22',  # Ersetzen Sie dies durch die öffentliche IP-Adresse Ihrer AWS-Instanz
+    port=8000
+)
 
-# Vektordatenbank initialisieren
-config = {
-    "client": "PersistentClient",
-    "path": "./vectordb/vertrag",
-}
+# Verwendung von OpenAIEmbeddingFunction aus Chroma utils
+embedding_function = embedding_functions.OpenAIEmbeddingFunction(
+    api_key=openai_api_key,
+    model_name="text-embedding-3-large"
+)
 
-# Verbindung zur Vektordatenbank herstellen
-# conn = st.connection("chromadb", type=ChromaDBConnection, **config)
-
-vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
+# Sammlung abrufen oder erstellen
+collection = chroma_client.get_or_create_collection(
+    name="bachelor-vertrag",
+    embedding_function=embedding_function
+)
 
 # DocumentExtraction-Klasse definieren
 class DocumentExtraction(BaseModel):
@@ -260,12 +265,16 @@ def comparer(order_structured_data: DocumentExtraction, invoice_structured_data:
 # RAG-Funktionen
 def retrieve_context(question, k=1):
     with st.spinner("Suche relevante Vertragsklauseln..."):
-        results = vectorstore.similarity_search(question, k=k)
+        results = collection.query(
+            query_texts=[question],
+            n_results=k,
+            include=["documents", "metadatas"]
+        )
     context = ""
-    for res in results:
-        context += f"{res.page_content}\n\n{res.metadata}\n\n"
-        st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content}")
-        st.info(f"📄 Ursprung der Klausel:  \n{res.metadata}")
+    for doc, metadata in zip(results['documents'][0], results['metadatas'][0]):
+        context += f"{doc}\n\n{metadata}\n\n"
+        st.info(f"📄 Gefundene relevante Klausel:  \n{doc}")
+        st.info(f"📄 Ursprung der Klausel:  \n{metadata}")
     return context
 
 def build_prompt(question, context):
@@ -378,7 +387,7 @@ st.set_page_config(page_title="Rechnungsverarbeitung", page_icon="📊", layout=
 st.title("📄 Rechnungsverarbeitung und Vertragsanalyse")
 st.write("Wählen Sie eine der folgenden Rechnungen aus, um den Verarbeitungs- und Analyseprozess zu starten:")
 
-# Custom CSS for better-looking buttons and links
+# Benutzerdefiniertes CSS für besser aussehende Buttons und Links
 st.markdown("""
 <style>
     .stButton>button {
