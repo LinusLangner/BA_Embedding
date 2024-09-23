@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from openai import OpenAI
 from typing import List, Dict, Any
 from datetime import datetime
- import chromadb
+import chromadb
 from dotenv import load_dotenv
 import chromadb.utils.embedding_functions as embedding_functions
 
@@ -19,13 +19,13 @@ import chromadb.utils.embedding_functions as embedding_functions
 load_dotenv()
 
 # Access the OpenAI API key from environment variables
-openai_api_key = os.getenv("OPENAI_API_KEY")
+# openai_api_key = os.getenv("OPENAI_API_KEY")
 
-if not openai_api_key:
-    raise ValueError("OpenAI API key not found. Please set it in the .env file.")
+# if not openai_api_key:
+    # raise ValueError("OpenAI API key not found. Please set it in the .env file.")
 
 # Laden des OpenAI API-Schlüssels aus Streamlit secrets
-# openai_api_key = st.secrets["OPENAI_API_KEY"]
+openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 # OpenAI-Client einrichten
 client = OpenAI(api_key=openai_api_key)
