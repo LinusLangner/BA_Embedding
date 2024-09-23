@@ -1,3 +1,7 @@
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 import streamlit as st
 import os
 import json
@@ -7,19 +11,12 @@ from pydantic import BaseModel
 from openai import OpenAI
 from typing import List, Dict, Any
 from datetime import datetime
-# import chromadb
+ import chromadb
 from dotenv import load_dotenv
-#import chromadb.utils.embedding_functions as embedding_functions
+import chromadb.utils.embedding_functions as embedding_functions
 
 # Load environment variables from .env file
 load_dotenv()
-
-import sqlite3
-import streamlit as st
-
-# Check SQLite version
-sqlite_version = sqlite3.sqlite_version
-st.write(f"SQLite version: {sqlite_version}")
 
 # Access the OpenAI API key from environment variables
 openai_api_key = os.getenv("OPENAI_API_KEY")
