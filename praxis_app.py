@@ -463,16 +463,3 @@ create_invoice_section(
     "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/documents/Lieferantenrechnungen/INV-2024-11335.pdf",
     "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/documents/Bestellaufträge/PO-2024-006.pdf"
 )
-
-st.markdown("""
----
-<div style="background-color: #f0f2f6; padding: 15px; border-radius: 5px; margin-top: 30px;">
-    <h3 style="color: #0066cc;">Über diese Anwendung</h3>
-    <p><strong>Titel der Bachelorarbeit:</strong> Innovationen durch Künstliche Intelligenz: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</p>
-    <p>Diese Anwendung demonstriert die praktische Umsetzung automatisierter Verarbeitung und Analyse von Rechnungen und Bestellungen unter Einsatz künstlicher Intelligenz.</p>
-    <p><strong>Student:</strong> Linus Langner<br>
-    <strong>Semester:</strong> 9. Semester BTM SS24<br>
-    <strong>Matrikelnummer:</strong> 2557735</p>
-    <p><em>Entwickelt im Rahmen der Bachelorarbeit an der HAW Hamburg - Fakultät DMI - Department Design</em></p>
-</div>
-""", unsafe_allow_html=True)

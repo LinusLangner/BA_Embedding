@@ -361,7 +361,7 @@ if user_input != st.session_state.api_input:
     st.session_state.api_input = user_input
     st.session_state.run_api = True
 
-    
+
 
 # Funktion für API-Aufruf
 def call_openai_api(api_input, temp):
