@@ -225,6 +225,7 @@ else:
 
     with col2:
         st.write("#### 3D Visualisierung")
+        st.write("Hinweis: Durch Klicken und Ziehen können Sie die Ansicht drehen.")
         st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
 
 # Größeren Abstand für klare Trennung hinzufügen
