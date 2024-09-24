@@ -380,6 +380,13 @@ def main(invoice_pdf_filename):
 # Streamlit-Benutzeroberfläche
 st.set_page_config(page_title="Rechnungsverarbeitung", page_icon="📊", layout="wide")
 
+st.markdown("""
+<div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #0066cc;">
+    <h4 style="color: #0066cc; margin: 0;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h4>
+    <p style="font-size: 14px; margin: 5px 0 0 0;">von Linus Langner, BTM SS24</p>
+</div>
+""", unsafe_allow_html=True)
+
 st.title("📄 Rechnungsverarbeitung und Vertragsanalyse")
 st.write("Wählen Sie eine der folgenden Rechnungen aus, um den Verarbeitungs- und Analyseprozess zu starten:")
 
@@ -439,3 +446,16 @@ create_invoice_section(
     "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/documents/Lieferantenrechnungen/INV-2024-11335.pdf",
     "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/documents/Bestellaufträge/PO-2024-006.pdf"
 )
+
+st.markdown("""
+---
+<div style="background-color: #f0f2f6; padding: 15px; border-radius: 5px; margin-top: 30px;">
+    <h3 style="color: #0066cc;">Über diese Anwendung</h3>
+    <p><strong>Titel der Bachelorarbeit:</strong> Innovationen durch Künstliche Intelligenz: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</p>
+    <p>Diese Anwendung demonstriert die praktische Umsetzung automatisierter Verarbeitung und Analyse von Rechnungen und Bestellungen unter Einsatz künstlicher Intelligenz und moderner Vertragsmanagement-Techniken.</p>
+    <p><strong>Student:</strong> Linus Langner<br>
+    <strong>Semester:</strong> 9. Semester BTM SS24<br>
+    <strong>Matrikelnummer:</strong> 2557735</p>
+    <p><em>Entwickelt im Rahmen einer Bachelorarbeit an der [Name Ihrer Universität]</em></p>
+</div>
+""", unsafe_allow_html=True)
