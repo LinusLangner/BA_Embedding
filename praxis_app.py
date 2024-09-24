@@ -339,6 +339,18 @@ def main(invoice_pdf_filename):
     else:
         st.success("✅ Keine Abweichungen gefunden!")
 
+    # Neue Zeile: Anzeige der Diskrepanzen als JSON
+    st.json(discrepancies)
+
+    invoice_base_name = os.path.splitext(invoice_pdf_filename)[0]
+    order_number = invoice_structured_data.order_number
+    json_filename = f"{invoice_base_name}_{order_number}.json"
+
+    with open(f"documents/Diskrepanzen/{json_filename}", "w") as f:
+        json.dump(discrepancies, f, indent=4)
+
+    st.success(f"✅ Abweichungen gespeichert in {json_filename}.")
+
     invoice_base_name = os.path.splitext(invoice_pdf_filename)[0]
     order_number = invoice_structured_data.order_number
     json_filename = f"{invoice_base_name}_{order_number}.json"
