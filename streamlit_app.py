@@ -318,7 +318,7 @@ def set_input_and_run(input_text):
     st.session_state.api_input = input_text
     st.session_state.run_api = True
 
-# Custom CSS für die Buttons und das Layout
+# Custom CSS für die Buttons (behalten wir bei)
 st.markdown("""
 <style>
     .stButton > button {
@@ -328,36 +328,23 @@ st.markdown("""
         border: none;
         padding: 0.5rem 1rem;
         border-radius: 4px;
+        margin-bottom: 10px;
         width: 100%;
-        max-width: 150px;
     }
     .stButton > button:hover {
         background-color: #0056b3;
     }
-    .button-container {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
 </style>
 """, unsafe_allow_html=True)
 
-# Beispiele als Buttons in einer Reihe
+# Beispiele als Buttons übereinander
 st.subheader("Beispiele")
-col1, col2, col3 = st.columns([1,1,1])
-with st.container():
-    st.markdown('<div class="button-container">', unsafe_allow_html=True)
-    with col1:
-        if st.button("Zufallszahl"):
-            set_input_and_run("Nenne eine zufällige Zahl zwischen 0 und 100.")
-    with col2:
-        if st.button("Obama"):
-            set_input_and_run("Wie heißt Obama mit Vornamen?")
-    with col3:
-        if st.button("Witz"):
-            set_input_and_run("Erzähle mir einen Witz.")
-    st.markdown('</div>', unsafe_allow_html=True)
+if st.button("Zufallszahl"):
+    set_input_and_run("Nenne eine zufällige Zahl zwischen 0 und 100.")
+if st.button("Obama"):
+    set_input_and_run("Wie heißt Obama mit Vornamen?")
+if st.button("Witz"):
+    set_input_and_run("Erzähle mir einen Witz.")
 
 # Freie Benutzereingabe
 user_input = st.text_input("Geben Sie Ihre eigene Abfrage ein:", value=st.session_state.api_input)
