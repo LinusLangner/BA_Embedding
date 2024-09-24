@@ -377,13 +377,30 @@ def main(invoice_pdf_filename):
     st.header("📊 Prozessstatistiken")
     st.metric("Prozessdauer", f"{total_time_taken:.2f} Sekunden")
 
-# Streamlit-Benutzeroberfläche
-st.set_page_config(page_title="Praxis", page_icon="🔗", layout="wide")
 
+# Streamlit-Benutzeroberfläche
+# Seiteneinstellungen
+st.set_page_config(page_title="Praxis - Rechnungsverarbeitung", page_icon="🔗", layout="wide")
+
+# Umfassende Einführung am Anfang der App
 st.markdown("""
-<div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #0066cc;">
-    <h4 style="color: #0066cc; margin: 0;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h4>
-    <p style="font-size: 14px; margin: 5px 0 0 0;">von Linus Langner, BTM SS24</p>
+<div style="background-color: #f0f2f6; padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #0066cc;">
+    <h2 style="color: #0066cc; margin-top: 0;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h2>
+    <h3 style="color: #333;">Praxis: Rechnungsverarbeitung und Vertragsanalyse</h3>
+    <p style="font-size: 16px; line-height: 1.6;">
+        <strong>Titel der Bachelorarbeit:</strong> Innovationen durch Künstliche Intelligenz: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie
+    </p>
+    <p style="font-size: 16px; line-height: 1.6;">
+        Diese Anwendung demonstriert die praktische Umsetzung automatisierter Verarbeitung und Analyse von Rechnungen und Bestellungen unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie.
+    </p>
+    <p style="font-size: 16px; line-height: 1.6;">
+        <strong>Student:</strong> Linus Langner<br>
+        <strong>Semester:</strong> 9. Semester BTM SS24<br>
+        <strong>Matrikelnummer:</strong> 2557735
+    </p>
+    <p style="font-size: 14px; font-style: italic;">
+        Entwickelt im Rahmen der Bachelorarbeit an der HAW Hamburg - Fakultät DMI - Department Design
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
