@@ -378,7 +378,7 @@ def main(invoice_pdf_filename):
     st.metric("Prozessdauer", f"{total_time_taken:.2f} Sekunden")
 
 # Streamlit-Benutzeroberfläche
-st.set_page_config(page_title="Rechnungsverarbeitung", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Praxis", page_icon="🔗", layout="wide")
 
 st.markdown("""
 <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #0066cc;">

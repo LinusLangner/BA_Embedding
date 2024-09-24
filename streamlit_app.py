@@ -11,9 +11,8 @@ import os
 hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-
-# Page settings
-st.set_page_config(page_title="Wort-Embeddings & Satz-Tokenizer", layout="wide")
+# Seiteneinstellungen
+st.set_page_config(page_title="Theorie u. Methodik", page_icon="🔗", layout="wide")
 
 # Umfassende Einführung am Anfang der App
 st.markdown("""
@@ -37,7 +36,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# General style guidelines for consistency
+# Allgemeine Stilrichtlinien für Konsistenz
 st.markdown("""
 <style>
     .stApp {
@@ -87,32 +86,34 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Section 1: Word Embeddings Visualizations
+# Abschnitt 1: Wort-Embeddings-Visualisierungen
 st.title("🔍 Wort-Embeddings Visualisierungen")
 
-# Load GloVe model only once and cache
+# GloVe-Modell nur einmal laden und zwischenspeichern
 @st.cache_resource
 def load_model():
     return api.load('glove-wiki-gigaword-50')
 
-# Load model
+# Modell laden
 model = load_model()
 
-# Word groups
+# Wortgruppen
 tier_worte = ["dog", "cat", "lion", "elephant", "bird", "fish", "horse", "tiger", "whale", "bear"]
 obst_worte = ["apple", "banana", "cherry", "grape", "orange", "pear", "peach", "plum", "peanut", "mango"]
 farben_worte = ["red", "blue", "green", "yellow", "purple", "pink", "black", "white", "brown"]
 emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", "love", "hate", "surprise"]
 
-# User input for custom words
+# Benutzereingabe für benutzerdefinierte Wörter
 st.subheader("Fügen Sie Ihre eigenen Wörter hinzu")
+st.write("Bitte beachten Sie, dass die Wörter auf Englisch eingegeben werden sollten.")
+st.write("Beispiel für die Eingabesyntax: Wort1, Wort2, Wort3")
 user_words = st.text_input("Geben Sie Wörter ein, getrennt durch Kommas:", "")
 user_words = [word.strip().lower() for word in user_words.split(',') if word.strip()]
 
-# Combine all words
+# Alle Wörter kombinieren
 alle_worte = tier_worte + obst_worte + farben_worte + emotions_worte + user_words
 
-# Get embeddings for all words, only if the word is in the model
+# Einbettungen für alle Wörter erhalten, nur wenn das Wort im Modell vorhanden ist
 embeddings = []
 valid_words = []
 for word in alle_worte:
@@ -127,22 +128,22 @@ embeddings = np.array(embeddings)
 if len(embeddings) == 0:
     st.error("Keines der Wörter wurde im GloVe-Modell gefunden.")
 else:
-    # 2D and 3D PCA
+    # 2D und 3D PCA
     pca_2d = PCA(n_components=2)
     reduzierte_embeddings_2d = pca_2d.fit_transform(embeddings)
 
     pca_3d = PCA(n_components=3)
     reduzierte_embeddings_3d = pca_3d.fit_transform(embeddings)
 
-    # Define marker shapes and sizes for different groups
+    # Markierungsformen und -größen für verschiedene Gruppen definieren
     shapes_2d = ['circle', 'square', 'diamond', 'triangle-up', 'cross']
-    sizes_3d = [8, 10, 12, 14, 16]  # Simulate different "shapes" using sizes in 3D
+    sizes_3d = [8, 10, 12, 14, 16]  # Simulieren verschiedener "Formen" mit Größen in 3D
 
-    # 2D scatter plot
+    # 2D-Streudiagramm
     fig_2d = go.Figure()
 
-    # Add points for each word group
-    colors = ['green', 'orange', 'blue', 'red', '#00FFFF']  # Cyan for user inputs
+    # Punkte für jede Wortgruppe hinzufügen
+    colors = ['green', 'orange', 'blue', 'red', '#00FFFF']  # Cyan für Benutzereingaben
     group_names = ["Tier", "Obst", "Farb", "Emotions", "Benutzer Eingaben"]
 
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
@@ -164,7 +165,7 @@ else:
                 name=group_name
             ))
 
-    # Update 2D layout with initial zoom out
+    # 2D-Layout mit anfänglichem Herauszoomen aktualisieren
     x_min, x_max = reduzierte_embeddings_2d[:, 0].min(), reduzierte_embeddings_2d[:, 0].max()
     y_min, y_max = reduzierte_embeddings_2d[:, 1].min(), reduzierte_embeddings_2d[:, 1].max()
 
@@ -178,10 +179,10 @@ else:
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
-    # 3D scatter plot
+    # 3D-Streudiagramm
     fig_3d = go.Figure()
 
-    # Add points for each word group
+    # Punkte für jede Wortgruppe hinzufügen
     for i, words in enumerate([tier_worte, obst_worte, farben_worte, emotions_worte, user_words]):
         valid_indices = [j for j, word in enumerate(valid_words) if word in words]
         if valid_indices:
@@ -199,7 +200,7 @@ else:
                 name=f'{group_names[i]}-bezogene Wörter' if i < 4 else group_names[i]
             ))
 
-    # Update 3D layout
+    # 3D-Layout aktualisieren
     fig_3d.update_layout(
         scene=dict(
             xaxis_title='PCA 1',
@@ -211,22 +212,23 @@ else:
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
 
-    # Layout and display
+    # Layout und Anzeige
     st.subheader("2D und 3D Wort-Embeddings Visualisierungen")
 
-    # Create two columns
+    # Zwei Spalten erstellen
     col1, col2 = st.columns(2)
 
-    # Display charts side by side
+    # Diagramme nebeneinander anzeigen
     with col1:
         st.write("#### 2D Visualisierung")
+        st.write("Hinweis: Ein Doppelklick in die Anwendung setzt die Ansicht zurück.")
         st.plotly_chart(fig_2d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
 
     with col2:
         st.write("#### 3D Visualisierung")
         st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
 
-# Add larger space for clear separation
+# Größeren Abstand für klare Trennung hinzufügen
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
 # Abschnitt 2: Satz-Tokenizer
@@ -255,7 +257,7 @@ def load_tokenizer(encoding_name="cl100k_base"):
     return tiktoken.get_encoding(encoding_name)
 
 def tokens_from_string(string: str, encoding_name: str):
-    """Returns the tokens in a text string."""
+    """Gibt die Tokens in einem Textstring zurück."""
     encoding = load_tokenizer(encoding_name)
     token_ids = encoding.encode(string)
     tokens = [encoding.decode_single_token_bytes(token_id).decode('utf-8') for token_id in token_ids]
@@ -265,7 +267,7 @@ def tokens_from_string(string: str, encoding_name: str):
 col1, col2, col3 = st.columns([2, 1, 1])
 
 # Platzhaltertext
-platzhalter_text = "Ein verlassener Garten verwilderte. Ein Junge begann, ihn zu pflegen. Blumen wuchsen bald überall."
+platzhalter_text = "Die Katze springt auf den Tisch."
 
 # Benutzereingabe in der ersten Spalte
 with col1:
@@ -305,39 +307,45 @@ if user_input:
     st.write("Token-IDs:", token_ids)
 
 
-# Section for User Input and API Calls
+# Abschnitt für API-Vergleich
 st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
 
-# Define the placeholder text
-placeholder_text = "Nenne eine zufällige Zahl zwischen 0 und 100."
+# Beispiele als Buttons
+st.subheader("Beispiele")
+col1, col2, col3 = st.columns(3)
+with col1:
+    if st.button("Beispiel 1"):
+        api_input = "Nenne eine zufällige Zahl zwischen 0 und 100."
+with col2:
+    if st.button("Beispiel 2"):
+        api_input = "Wie heißt Obama mit Vornamen?"
+with col3:
+    if st.button("Beispiel 3"):
+        api_input = "Erzähle mir einen Witz."
 
-# User query input with placeholder
-api_input = st.text_input("Geben Sie Ihre Abfrage ein:", placeholder=placeholder_text)
+# Freie Benutzereingabe
+api_input = st.text_input("Geben Sie Ihre eigene Abfrage ein:")
 
-# If no input is provided by the user, use the placeholder text as input
-if not api_input:
-    api_input = placeholder_text
+# Funktion für API-Aufruf
+def call_openai_api(api_input, temp):
+    client = openai.OpenAI()
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "Du bist ein hilfreicher Assistent."}, 
+            {"role": "user", "content": api_input}
+        ],
+        temperature=temp
+    )
+    return response.choices[0].message.content
 
-# Perform API calls if the input is provided
+# API-Aufrufe durchführen, wenn eine Eingabe vorhanden ist
 if api_input:
-    # Function to perform an API call
-    def call_openai_api(api_input, temp):
-        client = openai.OpenAI()
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "Du bist ein hilfreicher Assistent."}, 
-                {"role": "user", "content": api_input}
-            ],
-            temperature=temp
-        )
-        return response.choices[0].message.content
-
-    # Call the API with temperature 0 and 0.7
+    # API mit Temperatur 0 und 0.7 aufrufen
     response_temp_0 = call_openai_api(api_input, 0)
     response_temp_07 = call_openai_api(api_input, 0.7)
 
-    # Display both responses side by side with a border and markdown
+    # Beide Antworten nebeneinander mit Rahmen und Markdown anzeigen
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Antwort (Temperatur 0)")
@@ -352,4 +360,3 @@ if api_input:
             f"<div style='border: 2px solid #FF9800; padding: 10px; border-radius: 10px;'>{response_temp_07}</div>", 
             unsafe_allow_html=True
         )
-
