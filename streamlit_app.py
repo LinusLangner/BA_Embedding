@@ -310,21 +310,35 @@ if user_input:
 # Abschnitt für API-Vergleich
 st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
 
+# Initialisiere session_state
+if 'api_input' not in st.session_state:
+    st.session_state.api_input = ""
+if 'run_api' not in st.session_state:
+    st.session_state.run_api = False
+
+# Funktion zum Setzen der Eingabe und Auslösen des API-Aufrufs
+def set_input_and_run(input_text):
+    st.session_state.api_input = input_text
+    st.session_state.run_api = True
+
 # Beispiele als Buttons
 st.subheader("Beispiele")
 col1, col2, col3 = st.columns(3)
 with col1:
     if st.button("Beispiel 1"):
-        api_input = "Nenne eine zufällige Zahl zwischen 0 und 100."
+        set_input_and_run("Nenne eine zufällige Zahl zwischen 0 und 100.")
 with col2:
     if st.button("Beispiel 2"):
-        api_input = "Wie heißt Obama mit Vornamen?"
+        set_input_and_run("Wie heißt Obama mit Vornamen?")
 with col3:
     if st.button("Beispiel 3"):
-        api_input = "Erzähle mir einen Witz."
+        set_input_and_run("Erzähle mir einen Witz.")
 
 # Freie Benutzereingabe
-api_input = st.text_input("Geben Sie Ihre eigene Abfrage ein:")
+user_input = st.text_input("Geben Sie Ihre eigene Abfrage ein:", value=st.session_state.api_input)
+if user_input != st.session_state.api_input:
+    st.session_state.api_input = user_input
+    st.session_state.run_api = True
 
 # Funktion für API-Aufruf
 def call_openai_api(api_input, temp):
@@ -339,24 +353,28 @@ def call_openai_api(api_input, temp):
     )
     return response.choices[0].message.content
 
-# API-Aufrufe durchführen, wenn eine Eingabe vorhanden ist
-if api_input:
-    # API mit Temperatur 0 und 0.7 aufrufen
-    response_temp_0 = call_openai_api(api_input, 0)
-    response_temp_07 = call_openai_api(api_input, 0.7)
+# API-Aufrufe durchführen, wenn eine Eingabe vorhanden ist und run_api True ist
+if st.session_state.api_input and st.session_state.run_api:
+    with st.spinner('API-Anfragen werden verarbeitet...'):
+        # API mit Temperatur 0 und 0.7 aufrufen
+        response_temp_0 = call_openai_api(st.session_state.api_input, 0)
+        response_temp_07 = call_openai_api(st.session_state.api_input, 0.7)
 
-    # Beide Antworten nebeneinander mit Rahmen und Markdown anzeigen
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Antwort (Temperatur 0)")
-        st.markdown(
-            f"<div style='border: 2px solid #4CAF50; padding: 10px; border-radius: 10px;'>{response_temp_0}</div>", 
-            unsafe_allow_html=True
-        )
+        # Beide Antworten nebeneinander mit Rahmen und Markdown anzeigen
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Antwort (Temperatur 0)")
+            st.markdown(
+                f"<div style='border: 2px solid #4CAF50; padding: 10px; border-radius: 10px;'>{response_temp_0}</div>", 
+                unsafe_allow_html=True
+            )
 
-    with col2:
-        st.subheader("Antwort (Temperatur 0.7)")
-        st.markdown(
-            f"<div style='border: 2px solid #FF9800; padding: 10px; border-radius: 10px;'>{response_temp_07}</div>", 
-            unsafe_allow_html=True
-        )
+        with col2:
+            st.subheader("Antwort (Temperatur 0.7)")
+            st.markdown(
+                f"<div style='border: 2px solid #FF9800; padding: 10px; border-radius: 10px;'>{response_temp_07}</div>", 
+                unsafe_allow_html=True
+            )
+
+    # Zurücksetzen von run_api nach der Ausführung
+    st.session_state.run_api = False
