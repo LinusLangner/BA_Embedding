@@ -106,8 +106,7 @@ emotions_worte = ["happy", "sad", "angry", "excited", "nervous", "fear", "joy", 
 # Benutzereingabe für benutzerdefinierte Wörter
 st.subheader("Fügen Sie Ihre eigenen Wörter hinzu")
 st.write("Bitte beachten Sie, dass die Wörter auf Englisch eingegeben werden sollten.")
-st.write("Beispiel für die Eingabesyntax: Wort1, Wort2, Wort3")
-user_words = st.text_input("Geben Sie Wörter ein, getrennt durch Kommas:", "")
+user_words = st.text_input("Geben Sie Wörter ein, getrennt durch Kommas: (Wort1, Wort2, Wort3, usw.)", "")
 user_words = [word.strip().lower() for word in user_words.split(',') if word.strip()]
 
 # Alle Wörter kombinieren
