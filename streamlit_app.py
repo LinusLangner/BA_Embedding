@@ -12,7 +12,7 @@ hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Seiteneinstellungen
-st.set_page_config(page_title="Theorie u. Methodik", page_icon="🔗", layout="wide")
+st.set_page_config(page_title="Theorie - Methodik", page_icon="🔗", layout="wide")
 
 # Umfassende Einführung am Anfang der App
 st.markdown("""
@@ -305,6 +305,7 @@ if user_input:
 
 # Abschnitt für API-Vergleich
 st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
+st.write("Es bietet sich an, die jeweiligen Beispiele mehrmals auszuführen, um die Unterschiede in den Antworten zu sehen.")
 
 # Initialisiere session_state
 if 'api_input' not in st.session_state:
