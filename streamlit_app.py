@@ -17,8 +17,8 @@ st.set_page_config(page_title="Theorie - Methodik", page_icon="🔗", layout="wi
 # Umfassende Einführung am Anfang der App
 st.markdown("""
 <div style="background-color: #f0f2f6; padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #0066cc;">
-    <h2 style="color: #0066cc; margin-top: 0; font-size: 24px; font-weight: bold;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h2>
-    <h3 style="color: #333; font-size: 20px;">Theoretischer Hintergrund und Methodik</h3>
+    <h2 style="color: #0066cc; margin-top: 0;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h2>
+    <h3 style="color: #333;">Theoretischer Hintergrund und Methodik</h3>
     <p style="font-size: 16px; line-height: 1.6;">
         <strong>Titel der Bachelorarbeit:</strong> Innovationen durch Künstliche Intelligenz: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie
     </p>
@@ -360,8 +360,7 @@ user_input = st.text_input("Geben Sie Ihre eigene Abfrage ein:", value=st.sessio
 if user_input != st.session_state.api_input:
     st.session_state.api_input = user_input
     st.session_state.run_api = True
-
-
+    
 
 # Funktion für API-Aufruf
 def call_openai_api(api_input, temp):
