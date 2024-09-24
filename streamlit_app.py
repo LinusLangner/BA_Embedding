@@ -304,7 +304,10 @@ if user_input:
     st.write(f"Anzahl der Tokens: {len(tokens)}")
 
     # Token-IDs anzeigen
-    st.write("Token-IDs:", token_ids)
+    if 'token_ids' in locals():
+        st.subheader("Token-IDs:")
+        token_id_strings = [f"{i}: {id}" for i, id in enumerate(token_ids)]
+        st.text(", ".join(token_id_strings))
 
 
 # Abschnitt für API-Vergleich
@@ -321,17 +324,35 @@ def set_input_and_run(input_text):
     st.session_state.api_input = input_text
     st.session_state.run_api = True
 
-# Beispiele als Buttons
+# Custom CSS für die Buttons
+st.markdown("""
+<style>
+    .stButton > button {
+        background-color: #0066cc;
+        color: white;
+        font-weight: bold;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        margin-right: 10px;
+    }
+    .stButton > button:hover {
+        background-color: #0056b3;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Beispiele als Buttons in einer Reihe
 st.subheader("Beispiele")
 col1, col2, col3 = st.columns(3)
 with col1:
-    if st.button("Beispiel 1"):
+    if st.button("Zufallszahl"):
         set_input_and_run("Nenne eine zufällige Zahl zwischen 0 und 100.")
 with col2:
-    if st.button("Beispiel 2"):
+    if st.button("Obama"):
         set_input_and_run("Wie heißt Obama mit Vornamen?")
 with col3:
-    if st.button("Beispiel 3"):
+    if st.button("Witz"):
         set_input_and_run("Erzähle mir einen Witz.")
 
 # Freie Benutzereingabe
