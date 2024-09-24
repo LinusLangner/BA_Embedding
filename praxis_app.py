@@ -456,6 +456,6 @@ st.markdown("""
     <p><strong>Student:</strong> Linus Langner<br>
     <strong>Semester:</strong> 9. Semester BTM SS24<br>
     <strong>Matrikelnummer:</strong> 2557735</p>
-    <p><em>Entwickelt im Rahmen einer Bachelorarbeit an der [Name Ihrer Universität]</em></p>
+    <p><em>Entwickelt im Rahmen einer Bachelorarbeit an der HAW Hamburg - Fakultät DMI - Department Design</em></p>
 </div>
 """, unsafe_allow_html=True)
