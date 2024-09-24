@@ -15,6 +15,14 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 # Page settings
 st.set_page_config(page_title="Wort-Embeddings & Satz-Tokenizer", layout="wide")
 
+# Kurze Einführung am Anfang der App
+st.markdown("""
+<div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-bottom: 20px; border-left: 5px solid #0066cc;">
+    <h4 style="color: #0066cc; margin: 0;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h4>
+    <p style="font-size: 14px; margin: 5px 0 0 0;">Theoretischer Hintergrund und Methodik von Linus Langner, BTM SS24</p>
+</div>
+""", unsafe_allow_html=True)
+
 # General style guidelines for consistency
 st.markdown("""
 <style>
@@ -331,3 +339,16 @@ if api_input:
             unsafe_allow_html=True
         )
 
+
+st.markdown("""
+---
+<div style="background-color: #f0f2f6; padding: 15px; border-radius: 5px; margin-top: 30px;">
+    <h3 style="color: #0066cc;">Über diese Anwendung</h3>
+    <p><strong>Titel der Bachelorarbeit:</strong> Innovationen durch Künstliche Intelligenz: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</p>
+    <p>Diese Anwendung demonstriert den theoretischen Hintergrund und die Methodik der Forschung zur automatisierten Dokumentenverarbeitung unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie.</p>
+    <p><strong>Student:</strong> Linus Langner<br>
+    <strong>Semester:</strong> 9. Semester BTM SS24<br>
+    <strong>Matrikelnummer:</strong> 2557735</p>
+    <p><em>Entwickelt im Rahmen einer Bachelorarbeit an der [Name Ihrer Universität]</em></p>
+</div>
+""", unsafe_allow_html=True)
