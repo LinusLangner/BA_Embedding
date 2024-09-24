@@ -32,7 +32,7 @@ st.markdown("""
         <strong>Matrikelnummer:</strong> 2557735
     </p>
     <p style="font-size: 14px; font-style: italic;">
-        Entwickelt im Rahmen einer Bachelorarbeit an der [Name Ihrer Universität]
+        Entwickelt im Rahmen der Bachelorarbeit an der HAW Hamburg - Fakultät DMI - Department Design
     </p>
 </div>
 """, unsafe_allow_html=True)
