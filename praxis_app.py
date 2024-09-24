@@ -11,12 +11,12 @@ from pydantic import BaseModel
 from openai import OpenAI
 from typing import List, Dict, Any
 from datetime import datetime
-import chromadb
-from dotenv import load_dotenv
-import chromadb.utils.embedding_functions as embedding_functions
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
+
 
 # Load environment variables from .env file
-load_dotenv()
+# load_dotenv()
 
 # Access the OpenAI API key from environment variables
 # openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -34,23 +34,11 @@ client = OpenAI(api_key=openai_api_key)
 model = "gpt-4o-2024-08-06"
 model_mini = "gpt-4o-mini"
 
-# Einrichten des Chroma HTTP-Clients
-chroma_client = chromadb.HttpClient(
-    host='16.171.0.22',  # Ersetzen Sie dies durch die öffentliche IP-Adresse Ihrer AWS-Instanz
-    port=8000
-)
+# Embeddings und Vektorspeicher einrichten
+embeddings = OpenAIEmbeddings(api_key=openai_api_key, model="text-embedding-3-large")
 
-# Verwendung von OpenAIEmbeddingFunction aus Chroma utils
-embedding_function = embedding_functions.OpenAIEmbeddingFunction(
-    api_key=openai_api_key,
-    model_name="text-embedding-3-large"
-)
-
-# Sammlung abrufen oder erstellen
-collection = chroma_client.get_or_create_collection(
-    name="bachelor-vertrag",
-    embedding_function=embedding_function
-)
+# Vektordatenbank initialisieren
+vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
 
 # DocumentExtraction-Klasse definieren
 class DocumentExtraction(BaseModel):
@@ -279,16 +267,12 @@ def comparer(order_structured_data: DocumentExtraction, invoice_structured_data:
 # RAG-Funktionen
 def retrieve_context(question, k=1):
     with st.spinner("Suche relevante Vertragsklauseln..."):
-        results = collection.query(
-            query_texts=[question],
-            n_results=k,
-            include=["documents", "metadatas"]
-        )
+        results = vectorstore.similarity_search(question, k=k)
     context = ""
-    for doc, metadata in zip(results['documents'][0], results['metadatas'][0]):
-        context += f"{doc}\n\n{metadata}\n\n"
-        st.info(f"📄 Gefundene relevante Klausel:  \n{doc}")
-        st.info(f"📄 Ursprung der Klausel:  \n{metadata}")
+    for res in results:
+        context += f"{res.page_content}\n\n{res.metadata}\n\n"
+        st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content}")
+        st.info(f"📄 Ursprung der Klausel:  \n{res.metadata}")
     return context
 
 def build_prompt(question, context):
