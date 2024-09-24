@@ -134,9 +134,10 @@ def compare_article_numbers_with_gpt(order_article_numbers: List[str], invoice_a
             response = client.chat.completions.create(
                 model=model_mini,
                 messages=[
-                    {"role": "system", "content": """Sie sind ein Experte im Vergleichen von Artikelnummern."""},
-                    {"role": "user", "content": f"""Rechnungsartikelnummer: {invoice_article}. 
-                                                    Stimmt sie mit einer der folgenden Bestellartikelnummern überein: {order_article_numbers}?"""}
+                    {"role": "system", "content": """Du bist ein Experte für den Vergleich von Artikelnummern in Bestell- und Rechnungsdaten.
+                                                    Antworte immer mit 'ja' oder 'nein' (Groß-/Kleinschreibung beachten)"""},
+                    {"role": "user", "content": f"""Artikelnummer in der Rechnung: {invoice_article}. 
+                                                    Stimmt diese mit einer der folgenden Artikelnummern in der Bestellung überein: {order_article_numbers}?"""}
                 ],
                 temperature=0.0
             )
@@ -148,7 +149,8 @@ def compare_article_numbers_with_gpt(order_article_numbers: List[str], invoice_a
             discrepancies.append({
                 "invoice_article_number": invoice_article,
                 "order_article_numbers": order_article_numbers,
-                "note": """Rechnungsartikelnummer stimmt mit keiner Bestellartikelnummer überein."""
+                "note": """Artikelnummer in der Rechnung stimmt nicht 
+                mit einer Artikelnummer in der Bestellung überein"""
             })
             st.warning(f"⚠️ Abweichung gefunden: {invoice_article} nicht in Bestellung")
         else:
@@ -213,10 +215,11 @@ def compare_descriptions_with_gpt(order_descriptions: List[str], invoice_descrip
             response = client.chat.completions.create(
                 model=model_mini,
                 messages=[
-                    {"role": "system", "content": """Sie sind ein Experte im Vergleichen von Produktbeschreibungen."""},
-                    {"role": "user", "content": f"Beschreiben die folgenden Beschreibungen das gleiche Produkt? "
-                                                f"Bestellbeschreibung: {order_desc} "
-                                                f"Rechnungsbeschreibung: {invoice_desc}"}
+                    {"role": "system", "content": """Du bist ein Experte für den Vergleich von Produktbeschreibungen. 
+                                                    Antworte immer mit 'ja' oder 'nein' (Groß-/Kleinschreibung beachten)."""},
+                    {"role": "user", "content": f"Beschreiben die folgenden Beschreibungen das selbe Produkt? "
+                                                f"Beschreibung in der Bestellung: {order_desc} "
+                                                f"Beschreibung in der Rechnung: {invoice_desc}"}
                 ],
                 temperature=0.0
             )
@@ -229,7 +232,7 @@ def compare_descriptions_with_gpt(order_descriptions: List[str], invoice_descrip
                 "article_number": i + 1,
                 "order_description": order_desc,
                 "invoice_description": invoice_desc,
-                "note": "Beschreibungen sind unterschiedlich."
+                "note": "Die Beschreibungen sind unterschiedlich"
             })
             st.warning(f"⚠️ Beschreibungsabweichung bei Artikel {i+1}")
         else:
