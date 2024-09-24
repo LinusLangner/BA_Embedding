@@ -299,15 +299,8 @@ if user_input:
 
     st.markdown(tokens_html, unsafe_allow_html=True)
 
-    # Token-Informationen anzeigen
-    st.subheader("Token-Informationen:")
     st.write(f"Anzahl der Tokens: {len(tokens)}")
 
-    # Token-IDs anzeigen
-    if 'token_ids' in locals():
-        st.subheader("Token-IDs:")
-        token_id_strings = [f"{i}: {id}" for i, id in enumerate(token_ids)]
-        st.text(", ".join(token_id_strings))
 
 
 # Abschnitt für API-Vergleich
