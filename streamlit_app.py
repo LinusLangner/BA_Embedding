@@ -12,7 +12,7 @@ hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Seiteneinstellungen
-st.set_page_config(page_title="Theorie - Methodik", page_icon="🔗", layout="wide")
+st.set_page_config(page_title="Theorie - Methodik", page_icon="📊", layout="wide")
 
 # Umfassende Einführung am Anfang der App
 st.markdown("""
