@@ -390,7 +390,7 @@ def main(invoice_pdf_filename):
 
 # Streamlit-Benutzeroberfläche
 # Seiteneinstellungen
-st.set_page_config(page_title="Praxis - Rechnungsverarbeitung", page_icon="🤖", layout="wide")
+st.set_page_config(page_title="Praxis", page_icon="🤖", layout="wide")
 
 # Umfassende Einführung am Anfang der App
 st.markdown("""
