@@ -345,11 +345,16 @@ def main(invoice_pdf_filename):
     invoice_base_name = os.path.splitext(invoice_pdf_filename)[0]
     order_number = invoice_structured_data.order_number
     json_filename = f"{invoice_base_name}_{order_number}.json"
-
+    
     with open(f"documents/Diskrepanzen/{json_filename}", "w") as f:
         json.dump(discrepancies, f, indent=4)
-
+    
     st.success(f"✅ Abweichungen gespeichert in {json_filename}.")
+    
+    # Add the GitHub link
+    github_base_url = "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/documents/Diskrepanzen/"
+    github_link = f"{github_base_url}{json_filename}"
+    st.markdown(f"[🔗 Diskrepanzen auf GitHub anzeigen]({github_link})")
 
     st.header("🤖 RAG-Prozess")
     st.write("Überprüfe Lieferzeit anhand der Vertragsklauseln...")
