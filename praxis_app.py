@@ -273,9 +273,14 @@ def retrieve_context(question, k=1):
         results = vectorstore.similarity_search(question, k=k)
     context = ""
     for res in results:
-        context += f"{res.page_content}\n\n{res.metadata}\n\n"
+        # Adjust the page number in the metadata
+        adjusted_metadata = res.metadata.copy()
+        if 'page' in adjusted_metadata:
+            adjusted_metadata['page'] = adjusted_metadata['page'] + 1
+        
+        context += f"{res.page_content}\n\n{adjusted_metadata}\n\n"
         st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content}")
-        st.info(f"📄 Ursprung der Klausel:  \n{res.metadata}")
+        st.info(f"📄 Ursprung der Klausel:  \n{adjusted_metadata}")
     return context
 
 def build_prompt(question, context):
