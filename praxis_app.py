@@ -99,7 +99,9 @@ def extract_structured_data(user_input):
         completion = client.beta.chat.completions.parse(
             model=model,
             messages=[
-                {"role": "system", "content": """Sie sind ein Experte für die Extraktion strukturierter Daten."""},
+                {"role": "system", "content": """Du bist ein Experte für die Extraktion von strukturierten Daten. 
+                                                 Du erhältst unstrukturierten Text aus einer Bestellung und sollst 
+                                                 diesen in eine vorgegebene Struktur umwandeln."""},
                 {"role": "user", "content": user_input}
             ],
             response_format=DocumentExtraction,

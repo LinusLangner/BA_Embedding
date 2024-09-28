@@ -52,4 +52,4 @@ def main(invoice_pdf_filename):
     print(f"\nGesamtdauer des Prozesses: {total_time_taken:.2f} Sekunden")
 
 if __name__ == "__main__":
-    main("RE-2024-JUL-27-0001.pdf")
+    main("RE-2024-SEP-05-0003.pdf")
