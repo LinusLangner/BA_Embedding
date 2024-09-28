@@ -379,7 +379,9 @@ def call_openai_api(api_input, temp):
 if st.session_state.api_input and st.session_state.run_api:
     with st.spinner('API-Anfragen werden verarbeitet...'):
         # API mit Temperatur 0 und 0.7 aufrufen
+        st.write(f"Calling API with temperature 0")
         response_temp_0 = call_openai_api(st.session_state.api_input, 0)
+        st.write(f"Calling API with temperature 0.7")
         response_temp_07 = call_openai_api(st.session_state.api_input, 0.7)
 
         # Beide Antworten nebeneinander mit Rahmen und Markdown anzeigen
