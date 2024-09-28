@@ -1,5 +1,5 @@
 import os
-import fitz #PyMuPDF
+import fitz
 from pydantic import BaseModel
 from openai import OpenAI
 from token_tracker import track_token_usage
