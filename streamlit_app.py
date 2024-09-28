@@ -350,7 +350,7 @@ st.subheader("Beispiele")
 with st.container():
     st.markdown('<div class="button-container">', unsafe_allow_html=True)
     if st.button("Zufallszahl"):
-        set_input_and_run("Nenne eine zufällige Zahl zwischen 0 und 100.")
+        set_input_and_run("Nenne eine zufällige Zahl zwischen 0 und 100. Antworte nur mit der Zahl.")
     if st.button("Witz"):
         set_input_and_run("Erzähle mir einen Witz.")
     st.markdown('</div>', unsafe_allow_html=True)
