@@ -302,6 +302,8 @@ if user_input:
     st.write(f"Anzahl der Tokens: {len(tokens)}")
 
 
+# Größeren Abstand für klare Trennung hinzufügen
+st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
 # Abschnitt für API-Vergleich
 st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
