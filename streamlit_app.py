@@ -351,8 +351,6 @@ with st.container():
     st.markdown('<div class="button-container">', unsafe_allow_html=True)
     if st.button("Zufallszahl"):
         set_input_and_run("Nenne eine zufällige Zahl zwischen 0 und 100.")
-    if st.button("Obama"):
-        set_input_and_run("Wie heißt Obama mit Vornamen?")
     if st.button("Witz"):
         set_input_and_run("Erzähle mir einen Witz.")
     st.markdown('</div>', unsafe_allow_html=True)
