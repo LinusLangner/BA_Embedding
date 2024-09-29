@@ -478,3 +478,53 @@ create_invoice_section(
     "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/documents/Lieferantenrechnungen/INV-2024-11335.pdf",
     "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/documents/Bestellaufträge/PO-2024-006.pdf"
 )
+
+
+st.header("🤖 Vertragsfragen und -analyse")
+st.write("Stellen Sie eine Frage zum Vertrag oder wählen Sie ein Beispiel aus:")
+
+# Predefined example questions
+example_questions = [
+    "Was sind die Zahlungsbedingungen?",
+    "Wie lang ist die Lieferzeit?",
+    "Was passiert bei Lieferverzögerungen?"
+]
+
+# Create buttons for example questions
+col1, col2, col3 = st.columns(3)
+with col1:
+    if st.button(example_questions[0]):
+        user_question = example_questions[0]
+with col2:
+    if st.button(example_questions[1]):
+        user_question = example_questions[1]
+with col3:
+    if st.button(example_questions[2]):
+        user_question = example_questions[2]
+
+# Text input for custom questions
+user_input = st.text_input("Oder stellen Sie Ihre eigene Frage:", key="user_question")
+
+# Use the input from buttons or text input
+user_question = user_input or locals().get('user_question', '')
+
+if user_question:
+    st.write(f"🔍 Analysiere folgende Frage: {user_question}")
+    
+    # Retrieve context (now with k=5)
+    context = retrieve_context(user_question, k=5)
+    
+    # Build prompt
+    prompt = build_prompt(user_question, context)
+    
+    # Call LLM
+    response = call_llm(prompt)
+    
+    # Display the response
+    st.subheader("Antwort:")
+    st.info(response)
+
+    # Display token usage and cost
+    st.subheader("💰 Kosten für diese Anfrage")
+    query_cost = calculate_total_cost() - calculate_rag_total_cost()
+    st.metric("API-Kosten", f"${query_cost:.4f}")
