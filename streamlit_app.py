@@ -7,14 +7,15 @@ import tiktoken
 import random
 import openai
 import os
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
+from openai import OpenAI
 
 hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Seiteneinstellungen
 st.set_page_config(page_title="Theorie - Methodik", page_icon="📈", layout="wide")
-
-
 
 # Umfassende Einführung am Anfang der App
 st.markdown("""
@@ -369,7 +370,7 @@ if user_input != st.session_state.api_input:
 
 # Funktion für API-Aufruf
 def call_openai_api(api_input, temp):
-    client = openai.OpenAI()
+    client = OpenAI()
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -407,3 +408,64 @@ if st.session_state.api_input and st.session_state.run_api:
 
     # Zurücksetzen von run_api nach der Ausführung
     st.session_state.run_api = False
+
+# Größeren Abstand für klare Trennung hinzufügen
+st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
+
+# RAG-Funktionalität
+# Initialize embeddings and vector store
+embeddings = OpenAIEmbeddings(api_key=openai.api_key, model="text-embedding-3-large")
+vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
+
+def retrieve_context(question, k=5):
+    with st.spinner("Suche relevante Vertragsklauseln..."):
+        results = vectorstore.similarity_search(question, k=k)
+    context = ""
+    for res in results:
+        # Adjust the page number in the metadata
+        adjusted_metadata = res.metadata.copy()
+        if 'page' in adjusted_metadata:
+            adjusted_metadata['page'] = adjusted_metadata['page'] + 1
+        
+        context += f"{res.page_content}\n\n{adjusted_metadata}\n\n"
+        st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content}")
+        st.info(f"📄 Ursprung der Klausel:  \n{adjusted_metadata}")
+    return context
+
+def build_prompt(question, context):
+    return f"""
+    FRAGE: {question}
+
+    KONTEXT:
+    {context}
+    """
+
+def call_llm(prompt):
+    with st.spinner("Analysiere Vertragsklauseln..."):
+        client = OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-4o-2024-08-06",
+            messages=[
+                {"role": "system", "content": """Beantworten Sie die FRAGE nur mit dem bereitgestellten KONTEXT."""},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0
+        )
+    return response.choices[0].message.content
+
+def process_rag_query(question):
+    context = retrieve_context(question, k=5)
+    prompt = build_prompt(question, context)
+    response = call_llm(prompt)
+    return response
+
+# RAG-Abschnitt
+st.title("🤖 Vertragsklausel-Analyse (RAG)")
+st.write("Stellen Sie eine Frage zu den Vertragsklauseln, und das System wird relevante Informationen aus der Vektordatenbank abrufen und analysieren.")
+
+user_question = st.text_input("Ihre Frage zu den Vertragsklauseln:", "")
+
+if user_question:
+    response = process_rag_query(user_question)
+    st.subheader("Antwort basierend auf den Vertragsklauseln:")
+    st.info(response)
