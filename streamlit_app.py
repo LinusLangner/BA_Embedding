@@ -418,7 +418,7 @@ st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
 # RAG-Funktionalität
 # Initialisiere Embeddings und Vektor-Datenbank für RAG
-embeddings_rag = OpenAIEmbeddings(model="text-embedding-3-large")
+embeddings_rag = OpenAIEmbeddings(api_key=openai.api_key, model="text-embedding-3-large")
 vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings_rag)
 
 def retrieve_context(question, k=5):
@@ -436,6 +436,8 @@ def retrieve_context(question, k=5):
         st.info(f"📄 Ursprung der Klausel:  \n{adjusted_metadata}")
     return context
 
+client = OpenAI()
+
 def build_prompt(question, context):
     return f"""
     FRAGE: {question}
@@ -446,7 +448,6 @@ def build_prompt(question, context):
 
 def call_llm(prompt):
     with st.spinner("Analysiere Vertragsklauseln..."):
-        client = OpenAI()
         response = client.chat.completions.create(
             model="gpt-4o-2024-08-06",
             messages=[
