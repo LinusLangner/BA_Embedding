@@ -21,21 +21,21 @@ st.markdown("""
 <div style="background-color: #f0f2f6; padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #0066cc;">
     <h2 style="color: #0066cc; margin-top: 0;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h2>
     <h3 style="color: #333;">Theoretischer Hintergrund und Methodik</h3>
-    <p style="font-size: 16px; line-height: 1.6;">
+    <p style="color: #333;font-size: 16px; line-height: 1.6;">
         <strong>Titel der Bachelorarbeit:</strong> Innovationen durch Künstliche Intelligenz: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie
     </p>
-    <p style="font-size: 16px; line-height: 1.6;">
+    <p style="color: #333;font-size: 16px; line-height: 1.6;">
         Diese Anwendung demonstriert den theoretischen Hintergrund und die Methodik der Forschung zur automatisierten Dokumentenverarbeitung unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie. Sie bietet Einblicke in die zugrunde liegenden Konzepte und Forschungsansätze.
     </p>
     <p style="color: #333;font-size: 16px; line-height: 1.6;">
         Um eine optimale Darstellung zu gewährleisten, klicken Sie bitte auf die drei Punkte in der oberen rechten Ecke, öffnen Sie die Einstellungen und wählen Sie den <strong>Wide Mode</strong> sowie das <strong>helle App-Design (Light Theme)</strong> aus.
     </p>      
-    <p style="font-size: 16px; line-height: 1.6;">
+    <p style="color: #333;font-size: 16px; line-height: 1.6;">
         <strong>Student:</strong> Linus Langner<br>
         <strong>Semester:</strong> 9. Semester BTM SS24<br>
         <strong>Matrikelnummer:</strong> 2557735
     </p>
-    <p style="font-size: 14px; font-style: italic;">
+    <p style="color: #333;font-size: 14px; font-style: italic;">
         Entwickelt im Rahmen der Bachelorarbeit an der HAW Hamburg - Fakultät DMI - Department Design
     </p>
 </div>
