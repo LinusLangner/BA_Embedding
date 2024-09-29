@@ -27,7 +27,7 @@ st.markdown("""
     <p style="font-size: 16px; line-height: 1.6;">
         Diese Anwendung demonstriert den theoretischen Hintergrund und die Methodik der Forschung zur automatisierten Dokumentenverarbeitung unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie. Sie bietet Einblicke in die zugrunde liegenden Konzepte und Forschungsansätze.
     </p>
-    <p style="font-size: 16px; line-height: 1.6;">
+    <p style="color: #333;font-size: 16px; line-height: 1.6;">
         Um eine optimale Darstellung zu gewährleisten, klicken Sie bitte auf die drei Punkte in der oberen rechten Ecke, öffnen Sie die Einstellungen und wählen Sie den <strong>Wide Mode</strong> sowie das <strong>helle App-Design (Light Theme)</strong> aus.
     </p>      
     <p style="font-size: 16px; line-height: 1.6;">
