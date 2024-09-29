@@ -14,33 +14,7 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 # Seiteneinstellungen
 st.set_page_config(page_title="Theorie - Methodik", page_icon="📈", layout="wide")
 
-# Popup für erste Besucher
-if 'first_visit' not in st.session_state:
-    st.session_state['first_visit'] = True
 
-# Popup Inhalt
-def show_popup():
-    st.markdown("""
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999;">
-        <div style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; padding: 20px; background-color: white; border-radius: 10px; text-align: center;">
-            <h2 style="color: #0066cc;">Willkommen!</h2>
-            <p style="font-size: 16px; line-height: 1.6;">
-                Um für die beste Darstellung zu garantieren, gehen Sie bitte zu den drei Punkten in der rechten oberen Ecke und wählen Sie in den <strong>Settings</strong> den <strong>Wide mode</strong> und App Theme <strong>Light</strong> aus. Falls verwendet, deaktivieren Sie externe Dark-Mode-Erweiterungen.
-            </p>
-            <button onclick="window.closePopup()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">Verstanden</button>
-        </div>
-    </div>
-    <script>
-    window.closePopup = function() {
-        document.querySelector('div[style*="position: fixed"]').style.display = 'none';
-    }
-    </script>
-    """, unsafe_allow_html=True)
-
-# Popup nur bei erstem Besuch anzeigen
-if st.session_state['first_visit']:
-    show_popup()
-    st.session_state['first_visit'] = False
 
 # Umfassende Einführung am Anfang der App
 st.markdown("""
@@ -53,6 +27,9 @@ st.markdown("""
     <p style="font-size: 16px; line-height: 1.6;">
         Diese Anwendung demonstriert den theoretischen Hintergrund und die Methodik der Forschung zur automatisierten Dokumentenverarbeitung unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie. Sie bietet Einblicke in die zugrunde liegenden Konzepte und Forschungsansätze.
     </p>
+    <p style="font-size: 16px; line-height: 1.6;">
+        Um für die beste Darstellung zu garantieren, gehen Sie bitte zu den drei Punkten in der rechten oberen Ecke und wählen Sie in den Settings den <strong>Wide mode</strong> und App Theme <strong>Light</strong> aus. Falls verwendet, deaktivieren Sie externe Dark-Mode-Erweiterungen.
+    </p>        
     <p style="font-size: 16px; line-height: 1.6;">
         <strong>Student:</strong> Linus Langner<br>
         <strong>Semester:</strong> 9. Semester BTM SS24<br>
