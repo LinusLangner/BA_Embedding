@@ -417,9 +417,9 @@ if st.session_state.api_input and st.session_state.run_api:
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
 # RAG-Funktionalität
-# Initialize embeddings and vector store
-embeddings = OpenAIEmbeddings(api_key=openai.api_key, model="text-embedding-3-large")
-vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
+# Initialisiere Embeddings und Vektor-Datenbank für RAG
+embeddings_rag = OpenAIEmbeddings(model="text-embedding-3-large")
+vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings_rag)
 
 def retrieve_context(question, k=5):
     with st.spinner("Suche relevante Vertragsklauseln..."):
