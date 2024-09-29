@@ -419,7 +419,16 @@ st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 # RAG-Funktionalität
 # Initialisiere Embeddings und Vektor-Datenbank für RAG
 embeddings = OpenAIEmbeddings(api_key=openai.api_key, model="text-embedding-3-large")
-vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
+
+from chromadb import config
+
+chroma_settings = config.Settings(
+    chroma_db_impl="duckdb+parquet",
+    persist_directory="./vectordb/vertrag",
+    is_persistent=True
+)
+
+vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings, client_settings=chroma_settings)
 
 client = OpenAI(api_key=openai.api_key)
 
