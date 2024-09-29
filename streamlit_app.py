@@ -25,7 +25,7 @@ def show_popup():
         <div style="position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; padding: 20px; background-color: white; border-radius: 10px; text-align: center;">
             <h2 style="color: #0066cc;">Willkommen!</h2>
             <p style="font-size: 16px; line-height: 1.6;">
-                Um die beste Erfahrung zu erhalten, gehen Sie bitte zu den drei Punkten in der rechten oberen Ecke und wählen Sie und <strong>Settings</strong> <strong>Wide mode</strong> und App Theme <strong>Light</strong> aus. Falls verwendet, deaktivieren Sie externe Dark-Mode-Erweiterungen.
+                Um für die beste Darstellung zu garantieren, gehen Sie bitte zu den drei Punkten in der rechten oberen Ecke und wählen Sie in den <strong>Settings</strong> den <strong>Wide mode</strong> und App Theme <strong>Light</strong> aus. Falls verwendet, deaktivieren Sie externe Dark-Mode-Erweiterungen.
             </p>
             <button onclick="window.closePopup()" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">Verstanden</button>
         </div>
