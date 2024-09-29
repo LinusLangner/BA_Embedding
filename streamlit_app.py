@@ -11,41 +11,6 @@ import os
 hf_token = st.secrets["hf_token"]
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-import streamlit as st
-import gensim.downloader as api
-import numpy as np
-from sklearn.decomposition import PCA
-import plotly.graph_objs as go
-import tiktoken
-import random
-import openai
-import os
-
-# Seiteneinstellungen
-st.set_page_config(page_title="Theorie - Methodik", page_icon="📈", layout="wide")
-
-# Popup für Erstbesucher
-if 'first_visit' not in st.session_state:
-    st.session_state.first_visit = True
-
-if st.session_state.first_visit:
-    with st.popover("Willkommen!"):
-        st.markdown("""
-        ## Willkommen zu unserer App!
-
-        Für die beste Erfahrung empfehlen wir:
-
-        1. Klicken Sie auf die drei Punkte (⋮) in der oberen rechten Ecke.
-        2. Wählen Sie 'Settings'.
-        3. Aktivieren Sie den 'Light mode' für bessere Lesbarkeit.
-        4. Wählen Sie 'Wide mode' für eine optimale Darstellung.
-
-        Viel Spaß beim Erkunden!
-        """)
-        if st.button("Verstanden!"):
-            st.session_state.first_visit = False
-            st.experimental_rerun()
-
 # Seiteneinstellungen
 st.set_page_config(page_title="Theorie - Methodik", page_icon="📈", layout="wide")
 
