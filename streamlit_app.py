@@ -28,8 +28,8 @@ st.markdown("""
         Diese Anwendung demonstriert den theoretischen Hintergrund und die Methodik der Forschung zur automatisierten Dokumentenverarbeitung unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie. Sie bietet Einblicke in die zugrunde liegenden Konzepte und Forschungsansätze.
     </p>
     <p style="font-size: 16px; line-height: 1.6;">
-        Um für die beste Darstellung zu garantieren, gehen Sie bitte zu den drei Punkten in der rechten oberen Ecke und wählen Sie in den Settings den <strong>Wide mode</strong> und App Theme <strong>Light</strong> aus. Falls verwendet, deaktivieren Sie externe Dark-Mode-Erweiterungen.
-    </p>        
+        Um eine optimale Darstellung zu gewährleisten, klicken Sie bitte auf die drei Punkte in der oberen rechten Ecke, öffnen Sie die Einstellungen und wählen Sie den <strong>Wide Mode</strong> sowie das <strong>helle App-Design (Light Theme)</strong> aus.
+    </p>      
     <p style="font-size: 16px; line-height: 1.6;">
         <strong>Student:</strong> Linus Langner<br>
         <strong>Semester:</strong> 9. Semester BTM SS24<br>
