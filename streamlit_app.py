@@ -418,10 +418,13 @@ st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
 # RAG-Funktionalität
 # Initialisiere Embeddings und Vektor-Datenbank für RAG
-embeddings_rag = OpenAIEmbeddings(api_key=openai.api_key, model="text-embedding-3-large")
-vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings_rag)
+embeddings = OpenAIEmbeddings(api_key=openai.api_key, model="text-embedding-3-large")
+vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
 
-def retrieve_context(question, k=5):
+client = OpenAI(api_key=openai.api_key)
+
+# RAG-Funktionen
+def retrieve_context(question, k=1):
     with st.spinner("Suche relevante Vertragsklauseln..."):
         results = vectorstore.similarity_search(question, k=k)
     context = ""
@@ -436,8 +439,6 @@ def retrieve_context(question, k=5):
         st.info(f"📄 Ursprung der Klausel:  \n{adjusted_metadata}")
     return context
 
-client = OpenAI()
-
 def build_prompt(question, context):
     return f"""
     FRAGE: {question}
@@ -449,17 +450,19 @@ def build_prompt(question, context):
 def call_llm(prompt):
     with st.spinner("Analysiere Vertragsklauseln..."):
         response = client.chat.completions.create(
-            model="gpt-4o-2024-08-06",
+            model=model,
             messages=[
                 {"role": "system", "content": """Beantworten Sie die FRAGE nur mit dem bereitgestellten KONTEXT."""},
                 {"role": "user", "content": prompt}
             ],
             temperature=0
         )
+
+
     return response.choices[0].message.content
 
 def process_rag_query(question):
-    context = retrieve_context(question, k=5)
+    context = retrieve_context(question, k=1)  # Note: k=1 as per your retrieve_context function
     prompt = build_prompt(question, context)
     response = call_llm(prompt)
     return response
