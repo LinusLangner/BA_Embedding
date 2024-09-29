@@ -8,6 +8,19 @@ import random
 import openai
 import os
 
+hf_token = st.secrets["hf_token"]
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+import streamlit as st
+import gensim.downloader as api
+import numpy as np
+from sklearn.decomposition import PCA
+import plotly.graph_objs as go
+import tiktoken
+import random
+import openai
+import os
+
 # Seiteneinstellungen
 st.set_page_config(page_title="Theorie - Methodik", page_icon="📈", layout="wide")
 
@@ -32,9 +45,6 @@ if st.session_state.first_visit:
         if st.button("Verstanden!"):
             st.session_state.first_visit = False
             st.experimental_rerun()
-
-hf_token = st.secrets["hf_token"]
-openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Seiteneinstellungen
 st.set_page_config(page_title="Theorie - Methodik", page_icon="📈", layout="wide")
