@@ -481,7 +481,7 @@ create_invoice_section(
 # Größeren Abstand für klare Trennung hinzufügen
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
-st.header("🤖 Vertragsfragen und -analyse")
+st.header("🤖 Vertragsfragen und -analyse k=3")
 st.write("Stellen Sie eine Frage zum Vertrag oder wählen Sie ein Beispiel aus:")
 
 # Vordefinierte Beispielfragen
