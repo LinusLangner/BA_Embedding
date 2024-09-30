@@ -316,7 +316,7 @@ if user_input:
 st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 
 # Abschnitt für API-Vergleich
-st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
+st.title("🔍 API Vergleich (Temperatur 0 vs 1.2)")
 st.write("Es bietet sich an, die jeweiligen Beispiele mehrmals auszuführen, um die Unterschiede in den Antworten zu sehen.")
 
 # Initialisiere session_state
@@ -391,8 +391,8 @@ if st.session_state.api_input and st.session_state.run_api:
         # API mit Temperatur 0 und 0.7 aufrufen
         st.write(f"Calling API with temperature 0")
         response_temp_0 = call_openai_api(st.session_state.api_input, 0)
-        st.write(f"Calling API with temperature 0.7")
-        response_temp_07 = call_openai_api(st.session_state.api_input, 0.7)
+        st.write(f"Calling API with temperature 1.2")
+        response_temp_07 = call_openai_api(st.session_state.api_input, 1.2)
 
         # Beide Antworten nebeneinander mit Rahmen und Markdown anzeigen
         col1, col2 = st.columns(2)
@@ -404,7 +404,7 @@ if st.session_state.api_input and st.session_state.run_api:
             )
 
         with col2:
-            st.subheader("Antwort (Temperatur 0.7)")
+            st.subheader("Antwort (Temperatur 1.2)")
             st.markdown(
                 f"<div style='border: 2px solid #FF9800; padding: 10px; border-radius: 10px;'>{response_temp_07}</div>", 
                 unsafe_allow_html=True
