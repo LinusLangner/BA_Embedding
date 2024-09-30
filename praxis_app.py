@@ -499,8 +499,7 @@ user_question = user_input or locals().get('user_question', '')
 def get_github_link(metadata):
     base_url = "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/"
     file_path = metadata['source'].replace('\\', '/')
-    page_number = metadata['page']
-    return f"{base_url}{file_path}#page={page_number}"
+    return f"{base_url}{file_path}"
 
 def retrieve_context(question, k=3):
     with st.spinner("Suche relevante Vertragsklauseln..."):
@@ -515,8 +514,10 @@ def retrieve_context(question, k=3):
         github_link = get_github_link(adjusted_metadata)
         
         context += f"{res.page_content}\n\n{adjusted_metadata}\n\n"
-        st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content} \n\n"
-                f"📄 Ursprung der Klausel: [Dokument anzeigen]({github_link})")
+        st.info(
+            f"📄 Gefundene relevante Klausel:  \n{res.page_content} \n\n"
+            f"📄 Ursprung der Klausel: [Dokument anzeigen]({github_link}) (Seite {adjusted_metadata['page']})"
+        )
     return context
 
 if user_question:
@@ -528,7 +529,7 @@ if user_question:
     context = retrieve_context(user_question, k=3)
     
     # Erstellen des Prompts
-    prompt = build_prompt(user_question, context)
+    prompt = build_build_prompt(user_question, context)
     
     # Aufruf des LLM
     response = call_llm(prompt)
