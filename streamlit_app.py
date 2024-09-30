@@ -21,83 +21,117 @@ openai.api_key = st.secrets["OPENAI_API_KEY"]
 # Seiteneinstellungen
 st.set_page_config(page_title="Theorie - Methodik", page_icon="📈", layout="wide")
 
-# Umfassende Einführung am Anfang der App
-st.markdown("""
-<div style="background-color: #f0f2f6; padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #0066cc;">
-    <h2 style="color: #0066cc; margin-top: 0;">Bachelorarbeit: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie</h2>
-    <h3 style="color: #333;">Theoretischer Hintergrund und Methodik</h3>
-    <p style="color: #333;font-size: 16px; line-height: 1.6;">
-        <strong>Titel der Bachelorarbeit:</strong> Innovationen durch Künstliche Intelligenz: Automatisierte Dokumentenverarbeitung in der Bekleidungsindustrie
-    </p>
-    <p style="color: #333;font-size: 16px; line-height: 1.6;">
-        Diese Anwendung demonstriert den theoretischen Hintergrund und die Methodik der Forschung zur automatisierten Dokumentenverarbeitung unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie. Sie bietet Einblicke in die zugrunde liegenden Konzepte und Forschungsansätze.
-    </p>
-    <p style="color: #333;font-size: 16px; line-height: 1.6;">
-        Um eine optimale Darstellung zu gewährleisten, klicken Sie bitte auf die drei Punkte in der oberen rechten Ecke, öffnen Sie die Einstellungen und wählen Sie den <strong>Wide Mode</strong> sowie das <strong>helle App-Design (Light Theme)</strong> aus.
-    </p>      
-    <p style="color: #333;font-size: 16px; line-height: 1.6;">
-        <strong>Student:</strong> Linus Langner<br>
-        <strong>Semester:</strong> 9. Semester BTM SS24<br>
-        <strong>Matrikelnummer:</strong> 2557735
-    </p>
-    <p style="color: #333;font-size: 14px; font-style: italic;">
-        Entwickelt im Rahmen der Bachelorarbeit an der HAW Hamburg - Fakultät DMI - Department Design
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-# Allgemeine Stilrichtlinien für Konsistenz
+# Custom CSS für verbesserte Ästhetik
 st.markdown("""
 <style>
     .stApp {
-        max-width: 100%;
-        padding: 0 2rem;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f7fa;
     }
-    .st-emotion-cache-16idsys p {
-        font-size: 1.2rem;
+    .main-header {
+        background-color: #1e3a8a;
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .main-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .main-header h2 {
+        font-size: 1.5rem;
+        font-weight: 300;
+        margin-bottom: 1rem;
+    }
+    .section {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .section h2 {
+        color: #1e3a8a;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+    .stButton > button {
+        background-color: #3b82f6;
+        color: white;
+        font-weight: bold;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        border: none;
+        transition: background-color 0.3s;
+    }
+    .stButton > button:hover {
+        background-color: #2563eb;
+    }
+    .stTextInput > div > div > input {
+        border-radius: 5px;
+    }
+    .plot-container {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
     .stTextArea textarea {
         font-size: 1rem;
+        border-radius: 5px;
     }
-    .stTextArea .st-emotion-cache-16txtl3 {
-        font-size: 0.8rem;
-        opacity: 0.7;
-    }
-    h1, h2, h3 {
-        color: #333333;
-        font-weight: 600;
-    }
-    h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-    h2 {
-        font-size: 1.75rem;
-    }
-    h3 {
-        font-size: 1.5rem;
-    }
-    .stButton button {
-        background-color: #4CAF50;
-        color: white;
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
+    .token-container {
+        line-height: 1.6;
+        text-align: left;
+        word-break: break-word;
+        background-color: #f8fafc;
+        padding: 1rem;
+        border-radius: 5px;
         margin-top: 1rem;
     }
-    .stButton button:hover {
-        background-color: #45a049;
+    .token {
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        display: inline-block;
+        font-size: 1.05em;
     }
-    .stMarkdown {
-        font-size: 1.1rem;
-        line-height: 1.6;
+    .api-response {
+        border: 2px solid;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 1rem;
+    }
+    .temp-0 {
+        border-color: #4CAF50;
+    }
+    .temp-07 {
+        border-color: #FF9800;
     }
 </style>
 """, unsafe_allow_html=True)
 
+# Hauptüberschrift
+st.markdown("""
+<div class="main-header">
+    <h1>Bachelorarbeit: Automatisierte Dokumentenverarbeitung</h1>
+    <h2>Theoretischer Hintergrund und Methodik</h2>
+    <p style="font-size: 1rem;">
+        <strong>Student:</strong> Linus Langner | 
+        <strong>Semester:</strong> 9. Semester BTM SS24 | 
+        <strong>Matrikelnummer:</strong> 2557735
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
 # Abschnitt 1: Wort-Embeddings-Visualisierungen
-st.title("🔍 Wort-Embeddings Visualisierungen")
+st.markdown('<div class="section">', unsafe_allow_html=True)
+st.markdown("## 🔍 Wort-Embeddings Visualisierungen")
 
 # GloVe-Modell nur einmal laden und zwischenspeichern
 @st.cache_resource
@@ -238,11 +272,11 @@ else:
         st.write("Hinweis: Durch Klicken und Ziehen können Sie die Ansicht drehen.")
         st.plotly_chart(fig_3d, use_container_width=True, config={'displayModeBar': True, 'scrollZoom': True})
 
-# Größeren Abstand für klare Trennung hinzufügen
-st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Abschnitt 2: Satz-Tokenizer
-st.title("📝 Satz-Tokenizer")
+st.markdown('<div class="section">', unsafe_allow_html=True)
+st.markdown("## 📝 Satz-Tokenizer")
 
 # Definieren einer Reihe von subtilen, halbtransparenten Farben
 FARBEN = [
@@ -291,12 +325,12 @@ if user_input:
     st.subheader("Tokenisiertes Ergebnis:")
 
     # Container für Tokens mit Zeilenumbrüchen erstellen
-    tokens_html = '<div style="line-height: 1.6; text-align: left; word-break: break-word;">'
+    tokens_html = '<div class="token-container">'
     previous_color = None
     new_sentence = True
     for token in tokens:
         color = get_random_color(previous_color)
-        tokens_html += f'<span style="background-color:{color}; padding:3px 8px; border-radius:4px; margin-right:6px; margin-bottom:6px; display:inline-block; font-size:1.05em;">{token}</span>'
+        tokens_html += f'<span class="token" style="background-color:{color};">{token}</span>'
         if token.endswith('.'):
             tokens_html += '</div><div style="margin-bottom: 18px;"></div>'  # Größerer Abstand nach einem Punkt
             new_sentence = True
@@ -311,12 +345,11 @@ if user_input:
 
     st.write(f"Anzahl der Tokens: {len(tokens)}")
 
-
-# Größeren Abstand für klare Trennung hinzufügen
-st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Abschnitt für API-Vergleich
-st.title("🔍 API Vergleich (Temperatur 0 vs 0.7)")
+st.markdown('<div class="section">', unsafe_allow_html=True)
+st.markdown("## 🔍 API Vergleich (Temperatur 0 vs 0.7)")
 st.write("Es bietet sich an, die jeweiligen Beispiele mehrmals auszuführen, um die Unterschiede in den Antworten zu sehen.")
 
 # Initialisiere session_state
@@ -329,31 +362,6 @@ if 'run_api' not in st.session_state:
 def set_input_and_run(input_text):
     st.session_state.api_input = input_text
     st.session_state.run_api = True
-
-# Custom CSS für die Buttons
-st.markdown("""
-<style>
-    .stButton > button {
-        background-color: #0066cc;
-        color: white;
-        font-weight: bold;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        margin-bottom: 10px;
-        width: 200px;  /* Feste Breite für alle Buttons */
-        text-align: left;
-    }
-    .stButton > button:hover {
-        background-color: #0056b3;
-    }
-    .button-container {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-</style>
-""", unsafe_allow_html=True)
 
 # Beispiele als Buttons übereinander und linksbündig
 st.subheader("Beispiele")
@@ -371,7 +379,6 @@ if user_input != st.session_state.api_input:
     st.session_state.api_input = user_input
     st.session_state.run_api = True
     
-
 # Funktion für API-Aufruf
 def call_openai_api(api_input, temp):
     client = OpenAI()
@@ -389,27 +396,27 @@ def call_openai_api(api_input, temp):
 if st.session_state.api_input and st.session_state.run_api:
     with st.spinner('API-Anfragen werden verarbeitet...'):
         # API mit Temperatur 0 und 0.7 aufrufen
-        st.write(f"Calling API with temperature 0")
         response_temp_0 = call_openai_api(st.session_state.api_input, 0)
-        st.write(f"Calling API with temperature 0.7")
         response_temp_07 = call_openai_api(st.session_state.api_input, 0.7)
 
         # Beide Antworten nebeneinander mit Rahmen und Markdown anzeigen
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("Antwort (Temperatur 0)")
-            st.markdown(
-                f"<div style='border: 2px solid #4CAF50; padding: 10px; border-radius: 10px;'>{response_temp_0}</div>", 
-                unsafe_allow_html=True
-            )
+            st.markdown(f'<div class="api-response temp-0">{response_temp_0}</div>', unsafe_allow_html=True)
 
         with col2:
             st.subheader("Antwort (Temperatur 0.7)")
-            st.markdown(
-                f"<div style='border: 2px solid #FF9800; padding: 10px; border-radius: 10px;'>{response_temp_07}</div>", 
-                unsafe_allow_html=True
-            )
+            st.markdown(f'<div class="api-response temp-07">{response_temp_07}</div>', unsafe_allow_html=True)
 
     # Zurücksetzen von run_api nach der Ausführung
     st.session_state.run_api = False
 
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Fußzeile
+st.markdown("""
+<div style="text-align: center; margin-top: 2rem; padding: 1rem; background-color: #f0f4f8; border-radius: 10px;">
+    <p>Entwickelt von Linus Langner | HAW Hamburg - Fakultät DMI - Department Design</p>
+</div>
+""", unsafe_allow_html=True)
