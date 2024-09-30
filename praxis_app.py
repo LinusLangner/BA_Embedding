@@ -484,6 +484,8 @@ st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 st.header("🤖 Vertragsfragen und -analyse - k=3")
 st.write("Stellen Sie eine Frage zum Vertrag oder wählen Sie ein Beispiel aus:")
 
+st.markdown("<div style='height: 50px;'></div>", unsafe_allow_html=True)
+
 # Vordefinierte Beispielfragen
 example_questions = [
     "Welche Rechte und Pflichten ergeben sich für den Kunden, wenn aufgrund einer signifikanten Änderung der Rohstoffpreise eine Preisanpassung vorgenommen wird, die die Lieferbedingungen beeinflusst, und wie wirkt sich dies auf die Gewährleistungsfrist aus?",
