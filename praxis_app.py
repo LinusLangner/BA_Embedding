@@ -484,14 +484,14 @@ st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 st.header("🤖 Vertragsfragen und -analyse")
 st.write("Stellen Sie eine Frage zum Vertrag oder wählen Sie ein Beispiel aus:")
 
-# Predefined example questions
+# Vordefinierte Beispielfragen
 example_questions = [
     "Welche Rechte und Pflichten ergeben sich für den Kunden, wenn aufgrund einer signifikanten Änderung der Rohstoffpreise eine Preisanpassung vorgenommen wird, die die Lieferbedingungen beeinflusst, und wie wirkt sich dies auf die Gewährleistungsfrist aus?",
     "Wie werden Qualitätskontrollen durchgeführt und welche Konsequenzen hat es, wenn die gelieferte Ware nicht den vereinbarten Qualitätsstandards entspricht, insbesondere im Hinblick auf Nachbesserungsrechte und mögliche Vertragsstrafen?",
     "Welche Regelungen gelten für geistiges Eigentum und Vertraulichkeit, insbesondere wenn es um die Entwicklung kundenspezifischer Designs geht, und wie werden potenzielle Konflikte in Bezug auf Markenrechte und Patente gehandhabt?"
 ]
 
-# Create buttons for example questions
+# Erstelle Buttons für Beispielfragen
 col1, col2, col3 = st.columns(3)
 with col1:
     if st.button(example_questions[0], key='q1'):
@@ -503,45 +503,36 @@ with col3:
     if st.button(example_questions[2], key='q3'):
         user_question = example_questions[2]
 
-# Text input for custom questions
+# Texteingabe für benutzerdefinierte Fragen
 user_input = st.text_input("Oder stellen Sie Ihre eigene Frage:", key="user_question")
 
-# Use the input from buttons or text input
+# Verwende die Eingabe von Buttons oder Textfeld
 user_question = user_input or locals().get('user_question', '')
 
 if user_question:
     st.write(f"🔍 Analysiere folgende Frage: {user_question}")
     
-    # Retrieve context (now with k=3)
+    # Abrufen des Kontexts (jetzt mit k=3)
     context = retrieve_context(user_question, k=3)
     
-    # Build prompt
+    # Erstellen des Prompts
     prompt = build_prompt(user_question, context)
     
-    # Call LLM
+    # Aufruf des LLM
     response = call_llm(prompt)
     
-    # Display the relevant clauses
-    st.subheader("Relevante Vertragsklauseln:")
-    st.info(context)
-
-    # Display the response
+    # Anzeige der Antwort
     st.subheader("Antwort:")
     st.info(response)
 
-    # Display token usage and cost
-    st.subheader("💰 Kosten für diese Anfrage")
-    query_cost = calculate_total_cost() - calculate_rag_total_cost()
-    st.metric("API-Kosten", f"${query_cost:.4f}")
-
-# Add custom CSS to make buttons taller
+# Füge benutzerdefiniertes CSS hinzu, um Buttons höher zu machen
 st.markdown("""
 <style>
     .stButton>button {
-        height: 100px;  /* Increase height */
-        white-space: normal;  /* Allow text to wrap */
-        text-align: left;  /* Align text to the left */
-        padding: 10px;  /* Add some padding */
+        height: 100px;  /* Erhöhe die Höhe */
+        white-space: normal;  /* Erlaube Textumbruch */
+        text-align: left;  /* Textausrichtung links */
+        padding: 10px;  /* Füge Polsterung hinzu */
     }
 </style>
 """, unsafe_allow_html=True)
