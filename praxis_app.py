@@ -281,8 +281,7 @@ def retrieve_context(question, k=1):
             adjusted_metadata['page'] = adjusted_metadata['page'] + 1
         
         context += f"{res.page_content}\n\n{adjusted_metadata}\n\n"
-        st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content}")
-        st.info(f"📄 Ursprung der Klausel:  \n{adjusted_metadata}")
+        st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content} \n\n📄 Ursprung der Klausel:  \n{adjusted_metadata}")
     return context
 
 def build_prompt(question, context):
