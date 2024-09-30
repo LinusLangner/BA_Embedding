@@ -512,6 +512,8 @@ user_question = user_input or locals().get('user_question', '')
 if user_question:
     st.write(f"🔍 Analysiere folgende Frage: {user_question}")
     
+    total_cost_before_rag = calculate_total_cost()
+    
     # Abrufen des Kontexts (jetzt mit k=3)
     context = retrieve_context(user_question, k=3)
     
@@ -524,6 +526,13 @@ if user_question:
     # Anzeige der Antwort
     st.subheader("Antwort:")
     st.info(response)
+
+    total_cost_after_rag = calculate_total_cost()
+    rag_cost = total_cost_after_rag - total_cost_before_rag
+
+    # Anzeige der Token-Nutzung und Kosten
+    st.subheader("💰 Kosten für diese Anfrage")
+    st.metric("API-Kosten", f"${rag_cost:.4f}")
 
 # Füge benutzerdefiniertes CSS hinzu, um Buttons höher zu machen
 st.markdown("""
