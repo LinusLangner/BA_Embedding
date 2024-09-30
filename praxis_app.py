@@ -394,8 +394,8 @@ st.markdown("""
     <p style="color: #333;font-size: 16px; line-height: 1.6;">
         Diese Anwendung demonstriert die praktische Umsetzung automatisierter Verarbeitung und Analyse von Rechnungen und Bestellungen unter Einsatz künstlicher Intelligenz in der Bekleidungsindustrie.
     </p>
-    <p style="color: #333;font-size: 16px; line-height: 1.6;">
-        Um eine optimale Darstellung zu gewährleisten, klicken Sie bitte auf die drei Punkte in der oberen rechten Ecke, öffnen Sie die Einstellungen und wählen Sie den <strong>Wide Mode</strong> sowie das <strong>helle App-Design (Light Theme)</strong> aus.
+    <p style="color: #333; font-size: 16px; line-height: 1.6; border: 2px solid #0066cc; padding: 10px; border-radius: 5px;">
+    Um eine optimale Darstellung zu gewährleisten, klicken Sie bitte auf die drei Punkte in der oberen rechten Ecke, öffnen Sie die Einstellungen und wählen Sie den <strong>Wide Mode</strong> sowie das <strong>helle App-Design (Light Theme)</strong> aus.
     </p>          
     <p style="color: #333;font-size: 16px; line-height: 1.6;">
         <strong>Student:</strong> Linus Langner<br>
