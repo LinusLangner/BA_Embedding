@@ -525,7 +525,7 @@ if user_question:
 st.markdown("""
 <style>
     .stButton>button {
-        height: 100px;  /* Erhöhe die Höhe */
+        height: 75px;  /* Erhöhe die Höhe */
         white-space: normal;  /* Erlaube Textumbruch */
         text-align: left;  /* Textausrichtung links */
         padding: 10px;  /* Füge Polsterung hinzu */
