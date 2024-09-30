@@ -474,7 +474,7 @@ st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
 st.header("🤖 Vertragsfragen und -analyse - k=3")
 st.write("Stellen Sie eine Frage zum Vertrag oder wählen Sie ein Beispiel aus:")
 
-st.markdown("<div style='height: 50px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 30px;'></div>", unsafe_allow_html=True)
 
 # Vordefinierte Beispielfragen
 example_questions = [
@@ -483,17 +483,12 @@ example_questions = [
     "Welche Regelungen gelten für geistiges Eigentum und Vertraulichkeit, insbesondere wenn es um die Entwicklung kundenspezifischer Designs geht, und wie werden potenzielle Konflikte in Bezug auf Markenrechte und Patente gehandhabt?"
 ]
 
-# Erstelle Buttons für Beispielfragen
-col1, col2, col3 = st.columns(3)
-with col1:
-    if st.button(example_questions[0], key='q1'):
-        user_question = example_questions[0]
-with col2:
-    if st.button(example_questions[1], key='q2'):
-        user_question = example_questions[1]
-with col3:
-    if st.button(example_questions[2], key='q3'):
-        user_question = example_questions[2]
+# Erstelle Expander für Beispielfragen
+for i, question in enumerate(example_questions):
+    with st.expander(f"Beispielfrage {i+1}"):
+        st.write(question)
+        if st.button("Diese Frage stellen", key=f'q{i}'):
+            user_question = question
 
 # Texteingabe für benutzerdefinierte Fragen
 user_input = st.text_input("Oder stellen Sie Ihre eigene Frage:", key="user_question")
