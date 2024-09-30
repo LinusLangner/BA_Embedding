@@ -521,16 +521,13 @@ if user_question:
     # Call LLM
     response = call_llm(prompt)
     
-    # Display the response along with the relevant clauses
-    st.subheader("Antwort und relevante Vertragsklauseln:")
-    st.info(f"""
-    Relevante Vertragsklauseln:
-    
-    {context}
-    
-    Antwort:
-    {response}
-    """)
+    # Display the relevant clauses
+    st.subheader("Relevante Vertragsklauseln:")
+    st.info(context)
+
+    # Display the response
+    st.subheader("Antwort:")
+    st.info(response)
 
     # Display token usage and cost
     st.subheader("💰 Kosten für diese Anfrage")
