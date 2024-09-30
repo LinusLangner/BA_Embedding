@@ -412,3 +412,148 @@ if st.session_state.api_input and st.session_state.run_api:
 
     # Zurücksetzen von run_api nach der Ausführung
     st.session_state.run_api = False
+
+def track_token_usage(usage, model_type):
+    global token_usage
+    token_usage[model_type]["input_tokens"] += usage.prompt_tokens
+    token_usage[model_type]["output_tokens"] += usage.completion_tokens
+
+
+def calculate_total_cost():
+    total_cost = 0.0
+    for model_type, usage in token_usage.items():
+        if model_type == 'gpt-4o-2024-08-06':
+            input_cost_per_million = 2.500
+            output_cost_per_million = 10.000
+        elif model_type == 'gpt-4o-mini':
+            input_cost_per_million = 0.150
+            output_cost_per_million = 0.600
+        input_cost = (usage["input_tokens"] / 1_000_000) * input_cost_per_million
+        output_cost = (usage["output_tokens"] / 1_000_000) * output_cost_per_million
+        total_cost += input_cost + output_cost
+    return round(total_cost, 4)
+
+# Laden des OpenAI API-Schlüssels aus Streamlit secrets
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+
+# OpenAI-Client einrichten
+client = OpenAI(api_key=openai_api_key)
+
+# Modelle definieren
+model = "gpt-4o-2024-08-06"
+model_mini = "gpt-4o-mini"
+
+# Embeddings und Vektorspeicher einrichten
+embeddings = OpenAIEmbeddings(api_key=openai_api_key, model="text-embedding-3-large")
+
+# Vektordatenbank initialisieren
+vectorstore = Chroma(persist_directory="./vectordb/vertrag", embedding_function=embeddings)
+
+# RAG-Funktionen
+def retrieve_context(question, k=1):
+    with st.spinner("Suche relevante Vertragsklauseln..."):
+        results = vectorstore.similarity_search(question, k=k)
+    context = ""
+    for res in results:
+        # Adjust the page number in the metadata
+        adjusted_metadata = res.metadata.copy()
+        if 'page' in adjusted_metadata:
+            adjusted_metadata['page'] = adjusted_metadata['page'] + 1
+        
+        context += f"{res.page_content}\n\n{adjusted_metadata}\n\n"
+        st.info(f"📄 Gefundene relevante Klausel:  \n{res.page_content} \n\n📄 Ursprung der Klausel:  \n{adjusted_metadata}")
+    return context
+
+def build_prompt(question, context):
+    return f"""
+    FRAGE: {question}
+
+    KONTEXT:
+    {context}
+    """
+
+def call_llm(prompt):
+    with st.spinner("Analysiere Vertragsklauseln..."):
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": """Beantworten Sie die FRAGE nur mit dem bereitgestellten KONTEXT."""},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0
+        )
+
+    track_token_usage(response.usage, model)
+
+    return response.choices[0].message.content
+
+
+# Größeren Abstand für klare Trennung hinzufügen
+st.markdown("<div style='height: 150px;'></div>", unsafe_allow_html=True)
+
+st.header("🤖 Vertragsfragen und -analyse - k=3")
+st.write("Stellen Sie eine Frage zum Vertrag oder wählen Sie ein Beispiel aus:")
+
+st.markdown("<div style='height: 50px;'></div>", unsafe_allow_html=True)
+
+# Vordefinierte Beispielfragen
+example_questions = [
+    "Welche Rechte und Pflichten ergeben sich für den Kunden, wenn aufgrund einer signifikanten Änderung der Rohstoffpreise eine Preisanpassung vorgenommen wird, die die Lieferbedingungen beeinflusst, und wie wirkt sich dies auf die Gewährleistungsfrist aus?",
+    "Wie werden Qualitätskontrollen durchgeführt und welche Konsequenzen hat es, wenn die gelieferte Ware nicht den vereinbarten Qualitätsstandards entspricht, insbesondere im Hinblick auf Nachbesserungsrechte und mögliche Vertragsstrafen?",
+    "Welche Regelungen gelten für geistiges Eigentum und Vertraulichkeit, insbesondere wenn es um die Entwicklung kundenspezifischer Designs geht, und wie werden potenzielle Konflikte in Bezug auf Markenrechte und Patente gehandhabt?"
+]
+
+# Erstelle Buttons für Beispielfragen
+col1, col2, col3 = st.columns(3)
+with col1:
+    if st.button(example_questions[0], key='q1'):
+        user_question = example_questions[0]
+with col2:
+    if st.button(example_questions[1], key='q2'):
+        user_question = example_questions[1]
+with col3:
+    if st.button(example_questions[2], key='q3'):
+        user_question = example_questions[2]
+
+# Texteingabe für benutzerdefinierte Fragen
+user_input = st.text_input("Oder stellen Sie Ihre eigene Frage:", key="user_question")
+
+# Verwende die Eingabe von Buttons oder Textfeld
+user_question = user_input or locals().get('user_question', '')
+
+if user_question:
+    st.write(f"🔍 Analysiere folgende Frage: {user_question}")
+    
+    total_cost_before_rag = calculate_total_cost()
+    
+    # Abrufen des Kontexts (jetzt mit k=3)
+    context = retrieve_context(user_question, k=3)
+    
+    # Erstellen des Prompts
+    prompt = build_prompt(user_question, context)
+    
+    # Aufruf des LLM
+    response = call_llm(prompt)
+    
+    # Anzeige der Antwort
+    st.subheader("Antwort:")
+    st.info(response)
+
+    total_cost_after_rag = calculate_total_cost()
+    rag_cost = total_cost_after_rag - total_cost_before_rag
+
+    # Anzeige der Token-Nutzung und Kosten
+    st.subheader("💰 Kosten für diese Anfrage")
+    st.metric("API-Kosten", f"${rag_cost:.4f}")
+
+# Füge benutzerdefiniertes CSS hinzu, um Buttons höher zu machen
+st.markdown("""
+<style>
+    .stButton>button {
+        height: 100px;  /* Erhöhe die Höhe */
+        white-space: normal;  /* Erlaube Textumbruch */
+        text-align: left;  /* Textausrichtung links */
+        padding: 10px;  /* Füge Polsterung hinzu */
+    }
+</style>
+""", unsafe_allow_html=True)
