@@ -485,7 +485,7 @@ st.write("Stellen Sie eine Frage zum Vertrag oder wählen Sie ein Beispiel aus:"
 
 # Predefined example questions
 example_questions = [
-    "Welche Rechte und Pflichten ergeben sich für den Kunden, wenn aufgrund einer signifikanten Änderung der Rohstoffpreise eine Preisanpassung vorgenommen wird, die die Lieferbedingungen beeinflusst, und wie wirkt sich dies auf die Gewährleistungsfrist aus?",
+    "Was sind die Zahlungsbedingungen?",
     "Wie lang ist die Lieferzeit?",
     "Was passiert bei Lieferverzögerungen?"
 ]
@@ -512,7 +512,7 @@ if user_question:
     st.write(f"🔍 Analysiere folgende Frage: {user_question}")
     
     # Retrieve context (now with k=5)
-    context = retrieve_context(user_question, k=3)
+    context = retrieve_context(user_question, k=5)
     
     # Build prompt
     prompt = build_prompt(user_question, context)
