@@ -14,16 +14,6 @@ from datetime import datetime
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 
-
-# Load environment variables from .env file
-# load_dotenv()
-
-# Access the OpenAI API key from environment variables
-# openai_api_key = os.getenv("OPENAI_API_KEY")
-
-# if not openai_api_key:
-    # raise ValueError("OpenAI API key not found. Please set it in the .env file.")
-
 # Laden des OpenAI API-Schlüssels aus Streamlit secrets
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
