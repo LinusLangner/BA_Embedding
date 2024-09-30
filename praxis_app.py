@@ -496,30 +496,6 @@ user_input = st.text_input("Oder stellen Sie Ihre eigene Frage:", key="user_ques
 # Verwende die Eingabe von Buttons oder Textfeld
 user_question = user_input or locals().get('user_question', '')
 
-def get_github_link(metadata):
-    base_url = "https://github.com/LinusLangner/BA_Linus_Langner/blob/main/"
-    file_path = metadata['source'].replace('\\', '/')
-    return f"{base_url}{file_path}"
-
-def retrieve_context(question, k=3):
-    with st.spinner("Suche relevante Vertragsklauseln..."):
-        results = vectorstore.similarity_search(question, k=k)
-    context = ""
-    for res in results:
-        # Adjust the page number in the metadata
-        adjusted_metadata = res.metadata.copy()
-        if 'page' in adjusted_metadata:
-            adjusted_metadata['page'] = adjusted_metadata['page'] + 1
-        
-        github_link = get_github_link(adjusted_metadata)
-        
-        context += f"{res.page_content}\n\n{adjusted_metadata}\n\n"
-        st.info(
-            f"📄 Gefundene relevante Klausel:  \n{res.page_content} \n\n"
-            f"📄 Ursprung der Klausel: [Dokument anzeigen]({github_link}) (Seite {adjusted_metadata['page']})"
-        )
-    return context
-
 if user_question:
     st.write(f"🔍 Analysiere folgende Frage: {user_question}")
     
@@ -529,7 +505,7 @@ if user_question:
     context = retrieve_context(user_question, k=3)
     
     # Erstellen des Prompts
-    prompt = build_build_prompt(user_question, context)
+    prompt = build_prompt(user_question, context)
     
     # Aufruf des LLM
     response = call_llm(prompt)
